@@ -1,0 +1,91 @@
+        </tbody>
+            </table>
+        </div>
+        <div class='col-4' >
+            <h2>ITEMS PEDIDO</h2>
+            {% for pedido in pedidos %}
+            <table class='table table-striped table-inverse table-responsive'>
+                <thead class='thead-default'>
+                <tr>
+                    <th>Produto</th>
+                    <th>Valor</th>
+                    <th>Remover</th>
+                </tr>
+                </thead>
+                <tbody>{% for item in pedido.items.all %}
+                <tr>
+                    <td scope='row'>{{ item }}</td>
+                    <td>{{item.valor_total}}</td>
+                    <form method='post'action='tirar_item'>
+                        {% csrf_token %}
+                        <div class='form-group'>
+                            <input type='hidden' class='form-control' name='pedido' id='P' value='1'>
+                            <input type='hidden' class='form-control' name='remover_id' id='item' value='{{ item.pk }}'>
+
+                            <td>
+                                <button type='submit' name='deletar' class='btn btn-danger btn-sm'>Remover</button>
+                            </td>
+                        </div>
+                    </form>
+
+                </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+
+            <H4> Valor total: R${{ pedido.valor_total }}</H4>
+
+
+                <input name="" id="fechar" class="btn btn-primary" onclick="mudar_status()" type="button"
+                       value="{% if pedido.status == True %} ABRIR PEDIDO {% else %}  FECHAR PEDIDO {% endif %}">
+
+            </div>
+            <br>
+
+</div>
+        </div>
+
+
+
+    </div>
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    function mudar_status() {
+        $.ajax({
+            type: "POST",
+            url: "mudar_status",
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success: function (data) {
+      $("#fechar").val(data.ativo)
+      },
+
+            error: function (data) {
+                        // alerta caso tenha erros
+                        alert(response.responseJSON.errors);
+                        console.log(response.responseJSON.errors)
+                    },
+
+        }).done(function(e){
+            console.log("done")
+
+        })
+        .fail(function(e){
+            console.log('error')
+            console.log(e)
+        })
+
+    }
+
+</script>
+
+
+
+{% endfor %}
