@@ -161,7 +161,7 @@ def mudar_status(request,cliente,pedido):
 #     return redirect(f"/pedido/{cliente}/{pedido}")
 
 def tirar_item(request,cliente,pedido):
-    if request.method == 'POST' and 'remover_id' in request.POST:  # REMOVER PRODUTO
+    if request.method == 'POST':  # REMOVER PRODUTO
         try:
             order = Pedido.objects.get(id=pedido, status=False)
             remover = request.POST["remover_id"]
@@ -176,7 +176,8 @@ def tirar_item(request,cliente,pedido):
 
 
 def adicionar_item(request,cliente,pedido):
-    pedidos = serializers.serialize('json',Pedido.objects.filter(pk=pedido))
+    # pedidos = serializers.serialize('json',Pedido.objects.filter(pk=pedido))
+    pedidos = Pedido.objects.filter(pk=pedido)
     if request.method == 'POST':  # ADICONAR PRODUTO
         try:
             order = Pedido.objects.get(id=pedido, status=False)
@@ -185,8 +186,9 @@ def adicionar_item(request,cliente,pedido):
             id_produto = request.POST["id_produto"]
             print(quantidade, id_produto)
             if int(quantidade) <= 0:
-                data = {'status': 'error', 'erro': "quantidade inferior a 1", "pedidos": pedidos}
-                return JsonResponse(data, status=200)
+                data = { "pedidos": pedidos}
+                messages.error(request, '"quantidade inferior a 1"', 'danger')
+                return render(request, 'partials/_items.html',  data)
             else:
 
                 produto = Juice.objects.get(pk=id_produto)
@@ -196,13 +198,16 @@ def adicionar_item(request,cliente,pedido):
                 item.save()
 
                 order.items.add(item)
-                data = {'status': 'success', 'success': "item adicionado", "pedidos": pedidos}
+                data = {"pedidos": pedidos}
 
+                messages.success(request, 'Item adicionado', 'success')
 
-                return render(request, 'partials/_items.html', data)
+                return render(request, 'partials/_items.html',  data)
+
         except:
-            data = {'status': 'error', 'erro': "Pedido Fechado", "pedidos": pedidos}
-            return JsonResponse(data, status=200)
+            data = {"pedidos": pedidos}
+            messages.error(request, 'pedido fechado', 'success')
+            return render(request, 'partials/_items.html',  data)
 
 
 
