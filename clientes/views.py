@@ -74,6 +74,7 @@ def cadastro_com_endereco(request):
             cliente.save()
             form.save()
             messages.success(request, ('O endereço foi salvo!'))
+            return redirect("dashboard")
         else:
             messages.error(request, 'Error salvar o formulario')
 

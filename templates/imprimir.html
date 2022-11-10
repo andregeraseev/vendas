@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+
+<div class="container mt-3">
+    <div id="print">
+        {% for cliente in clientes %}
+        <div class="row">
+            <div class="col-7">
+                <h5>XFLAVORS</h5>
+                <h6>VENDEDOR: {{ cliente.vendedor }}</h6>
+            </div>
+            <div class="col-5">
+
+                <h5>CLIENTE: {{ cliente.nome }}</h5>
+
+                {% for endereco in cliente.endereco_set.all %}
+                <h6>Endereço: {{ endereco.apelido}}</h6>
+                <h6>Logradouro: {{ endereco.logradouro}} Numero: {{ endereco.numero}}</h6>
+                <h6>Bairro: {{ endereco.bairro}} Estado: {{ endereco.uf}}</h6>
+                <h6>cep: {{ endereco.cep}}</h6>
+                <h6>complemento: {{ endereco.complemento}}</h6>
+                {% endfor %}
+                {% endfor %}
+
+            </div>
+        </div>
+
+
+        <br><br>
+        <h2>PEDIDO#{{ pedidos }}</h2>
+        <br>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Quantidade</th>
+            </tr>
+            </thead>
+            {% if item0mg %}
+            <thead class="thead-dark">
+            <th>JUICES 0 MG</th>
+            </thead>
+            {% endif %}
+            <tbody class="table-group-divider">
+            {% for item in item0mg %}
+            <tr>
+
+                <td>{{ item.produto.nome }}{{ item.produto.mg }}</td>
+                <td>{{ item.quantidade }}</td>
+            </tr>
+
+            {% endfor %}
+            {% if item3mg %}
+            <thead class="thead-dark">
+            <th>JUICES 3 MG</th>
+            </thead>
+            {% endif %}
+
+            <tbody class="table-group-divider">
+            {% for item in item3mg %}
+            <tr>
+
+                <td>{{ item.produto.nome }}{{ item.produto.mg }}</td>
+                <td>{{ item.quantidade }}</td>
+            </tr>
+            {% endfor %}
+            {% if item6mg %}
+            <thead class="thead-dark">
+            <th>JUICES 6 MG</th>
+            </thead>
+            {% endif %}
+            <tbody class="table-group-divider">
+            {% for item in item6mg %}
+            <tr>
+
+                <td>{{ item.produto.nome }}{{ item.produto.mg }}</td>
+                <td>{{ item.quantidade }}</td>
+            </tr>
+            {% endfor %}
+            {% if item9mg %}
+            <thead class="thead-dark">
+            <th>JUICES 9 MG</th>
+            </thead>
+            {% endif %}
+            <tbody class="table-group-divider">
+            {% for item in item9mg %}
+            <tr>
+
+                <td>{{ item.produto.nome }}{{ item.produto.mg }}</td>
+                <td>{{ item.quantidade }}</td>
+            </tr>
+            {% endfor %}
+            {% if item12mg %}
+            <thead class="thead-dark">
+            <th>JUICES 12 MG</th>
+            </thead>
+            {% endif %}
+            <tbody class="table-group-divider">
+            {% for item in item12mg %}
+            <tr>
+
+                <td>{{ item.produto.nome }}{{ item.produto.mg }}</td>
+                <td>{{ item.quantidade }}</td>
+            </tr>
+            {% endfor %}
+
+
+            </tbody>
+        </table>
+
+    </div>
+
+    <input name="" id="" onclick="printDiv('print')" class="btn btn-primary" type="button" value="Imprimir">
+    <!--<input type="button" onclick="printDiv('print')" value="print a div!" />-->
+</div>
+<script>
+
+
+
+function printDiv(divName) {
+     var printContents = document.getElementById(divName).innerHTML;
+     var originalContents = document.body.innerHTML;
+
+     document.body.innerHTML = printContents;
+
+     window.print();
+
+     document.body.innerHTML = originalContents;
+}
+
+</script>
+
+
+{% endblock %}
+
+

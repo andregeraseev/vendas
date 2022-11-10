@@ -14,7 +14,7 @@ class Cliente(models.Model):
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     def __str__(self):
-        return self.nome + ' ' + self.email
+        return self.nome
 
     def save(self, *args, **kwargs):
         if not self.slug:

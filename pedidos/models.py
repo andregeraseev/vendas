@@ -14,6 +14,8 @@ class Item(models.Model):
     def valor_total(self):
             return self.quantidade * 25
 
+
+
     def __str__(self):
         return str(self.produto.nome) + " " + str(self.produto.mg) + " " + str(self.quantidade) +"un"
 
@@ -26,6 +28,8 @@ class Pedido(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
     status = models.BooleanField(default=False)
+    pagamento = models.BooleanField(default=False)
+    primeira_compra = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.pk)
@@ -45,8 +49,12 @@ class Pedido(models.Model):
             return quantidade * 25
         # return sum([item.valor_total for item in self.items.all()])
 
-
-
+    @property
+    def comicao(self):
+        if self.primeira_compra == True:
+            return  int(self.valor_total) * 0.10
+        else:
+            return int(self.valor_total) * 0.05
 
 
 

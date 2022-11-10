@@ -1,0 +1,26 @@
+<tr>
+    <td scope="row">{{produto.nome}} {{produto.mg}}</td>
+    <td>{{produto.valor}}</td>
+    <form method="post" id="add_item{{produto.id}}">
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="hidden" class="form-control" name="pedido{{produto.id}}"
+                   id="pedido{{produto.id}}" value="1">
+            <input type="hidden" class="form-control" name="produto{{produto.id}}"
+                   id="produto{{produto.id}}"
+                   value="{{ produto.pk }}">
+            <td>
+                <div class="col-3">
+
+                    <input type="number"
+                           class="form-control quantidade{{produto.id}}" name="quantidade{{produto.id}}"
+                           id="quantidade{{produto.id}}" value="0" placeholder="">
+                </div>
+            </td>
+            <td><button type="submit" class="btn btn-danger">Adicionar</button></td>
+        </div>
+
+
+    </form>
+</tr>
+

@@ -69,7 +69,8 @@
             </div>
 
             <div class='col-5'>
-
+                <a  class="btn btn-primary" href="imprimir" role="button">imprimir</a>
+                <a  class="btn btn-primary" href="/pedidos/{% for client in cliente %}{{ client.id }}{% endfor %}" role="button">voltar</a>
                 <div id='pedido_carrinho'>
 
                     {% include 'partials/_items.html' %}

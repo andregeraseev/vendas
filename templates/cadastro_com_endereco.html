@@ -1,115 +1,97 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-	<!--Importando Script Jquery-->
-	<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-
-
-
-<!--        <div class="container">-->
-<!--          &lt;!&ndash;Django Model Form&ndash;&gt;-->
-<!--          <h2 class="my-4">ENDEREÇO</h2>-->
-<!--          <form method="post" enctype="multipart/form-data">-->
-<!--            {% csrf_token %}-->
-<!--			  <input type="hidden" id="id_cliente" name="client" value="1">-->
-<!--                {{endereco_form}}-->
-<!--                <button class="btn btn-primary my-4" type="submit">Submit</button>-->
-<!--          </form>-->
-<!--          &lt;!&ndash;Django Model&ndash;&gt;-->
-
-
-<!--        </div>-->
-
-
-
+<!--Importando Script Jquery-->
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
 {% load widget_tweaks %}
 <div class="container">
 
-  <form method="post" >
-    {% csrf_token %}
-    {% for hidden_field in cliente_form.hidden_fields %}
-      {{ hidden_field }}
-    {% endfor %}
-    {% for hidden_field in endereco_form.hidden_fields %}
-      {{ hidden_field }}
-    {% endfor %}
-
-    {% if endereco_form.non_field_errors %}
-      <div class="alert alert-danger" role="alert">
-        {% for error in cliente_form.non_field_errors %}
-          {{ error }}
+    <form method="post">
+        {% csrf_token %}
+        {% for hidden_field in cliente_form.hidden_fields %}
+        {{ hidden_field }}
         {% endfor %}
-        {% for error in endereco_form.non_field_errors %}
-          {{ error }}
+        {% for hidden_field in endereco_form.hidden_fields %}
+        {{ hidden_field }}
         {% endfor %}
-      </div>
-    {% endif %}
-    <div class="row">
-      <div class="col-12 bg-danger my-2"> <h2>CLIENTE</h2></div>
-      {% for field in cliente_form.visible_fields %}
-        <div class="form-group col-6">
-          {{ field.label_tag }}
 
-          {% if cliente_form.is_bound %}
-            {% if field.errors %}
-              {% render_field field class="form-control is-invalid" %}
-              {% for error in field.errors %}
-                <div class="invalid-feedback">
-                  {{ error }}
-                </div>
-              {% endfor %}
-            {% else %}
-              {% render_field field class="form-control is-valid" %}
-            {% endif %}
-          {% else %}
-            {% render_field field class="form-control" %}
-          {% endif %}
-
-          {% if field.help_text %}
-            <small class="form-text text-muted">{{ field.help_text }}</small>
-          {% endif %}
+        {% if endereco_form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for error in cliente_form.non_field_errors %}
+            {{ error }}
+            {% endfor %}
+            {% for error in endereco_form.non_field_errors %}
+            {{ error }}
+            {% endfor %}
         </div>
-      {% endfor %}
-    </div>
-    <div class="row">
-      <div class="col-12 bg-danger my-2"> <h2>ENDEREÇO</h2></div>
-      {% for field in endereco_form.visible_fields %}
-        <div class="form-group col-6">
-          {{ field.label_tag }}
+        {% endif %}
+        <div class="row">
+            <div class="col-12 bg-danger my-2"><h2>CLIENTE</h2></div>
+            {% for field in cliente_form.visible_fields %}
+            <div class="form-group col-6">
+                {{ field.label_tag }}
 
-          {% if endereco_form.is_bound %}
-            {% if field.errors %}
-              {% render_field field class="form-control is-invalid" %}
-              {% for error in field.errors %}
+                {% if cliente_form.is_bound %}
+                {% if field.errors %}
+                {% render_field field class="form-control is-invalid" %}
+                {% for error in field.errors %}
                 <div class="invalid-feedback">
-                  {{ error }}
+                    {{ error }}
                 </div>
-              {% endfor %}
-            {% else %}
-              {% render_field field class="form-control is-valid" %}
-            {% endif %}
-          {% else %}
-            {% render_field field class="form-control" %}
-          {% endif %}
+                {% endfor %}
+                {% else %}
+                {% render_field field class="form-control is-valid" %}
+                {% endif %}
+                {% else %}
+                {% render_field field class="form-control" %}
+                {% endif %}
 
-          {% if field.help_text %}
-            <small class="form-text text-muted">{{ field.help_text }}</small>
-          {% endif %}
+                {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+            {% endfor %}
         </div>
-      {% endfor %}
-    </div>
+        <div class="row">
+            <div class="col-12 bg-danger my-2"><h2>ENDEREÇO</h2></div>
+            {% for field in endereco_form.visible_fields %}
+            <div class="form-group col-6">
+                {{ field.label_tag }}
+
+                {% if endereco_form.is_bound %}
+                {% if field.errors %}
+                {% render_field field class="form-control is-invalid" %}
+                {% for error in field.errors %}
+                <div class="invalid-feedback">
+                    {{ error }}
+                </div>
+                {% endfor %}
+                {% else %}
+                {% render_field field class="form-control is-valid" %}
+                {% endif %}
+                {% else %}
+                {% render_field field class="form-control" %}
+                {% endif %}
+
+                {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
 
 
-      <input type="hidden"
-             class="form-control" name="vendedor"  value="{{ user.request.id }}">
-      <small id="helpId" class="form-text text-muted">Help text</small>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
+        <input type="hidden"
+               class="form-control" name="vendedor" value="{{ user.request.id }}">
+
+
+        <button type="submit" class="btn btn-primary my-4">Submit</button>
+    </form>
+  <a class="btn btn-primary" href="/dashboard" role="button">dashboard</a>
 </div>
 
-	<script type="text/javascript">
+<script type="text/javascript">
 		$("#id_cep").focusout(function(){
 			//Início do Comando AJAX
 			$.ajax({
@@ -137,7 +119,9 @@
 				}
 			});
 		});
-	</script>
+
+
+</script>
 
 
 {% endblock %}

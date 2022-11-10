@@ -2,11 +2,17 @@ from django.contrib import messages, auth
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from clientes.models import Cliente
+from pedidos.models import Pedido
 
 def dashboard(request):
     clientes = Cliente.objects.filter(vendedor=request.user.id)
-    return render(request=request, template_name="dashboard.html",
-                  context={'clientes': clientes})
+    pedidos = Pedido.objects.filter(vendedor=request.user.id)
+    context = {
+        'pedidos': pedidos,
+        'clientes': clientes}
+
+
+    return render(request=request, template_name="dashboard.html",context = context)
 
 
 def login(request):

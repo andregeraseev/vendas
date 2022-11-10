@@ -110,6 +110,42 @@ def pedido(request,cliente,pedido):
 
 
 
+
+def imprimir(request,cliente,pedido):
+    clientes = Cliente.objects.filter(slug=cliente)
+    vendedor = Vendedor.objects.all()
+    produtos0mg = Pedido.objects.filter(id=pedido,items__produto__mg="0mg")
+    produtos3mg = Juice.objects.filter(mg="3mg").order_by('nome')
+    produtos6mg = Juice.objects.filter(mg="6mg").order_by('nome')
+    produtos9mg = Juice.objects.filter(mg="9mg").order_by('nome')
+    produtos12mg = Juice.objects.filter(mg="12mg").order_by('nome')
+    pedidos = Pedido.objects.get(pk=pedido)
+    item0mg = pedidos.items.filter(produto__mg='0mg').order_by('produto')
+    item3mg = pedidos.items.filter(produto__mg='3mg').order_by('produto')
+    item6mg  = pedidos.items.filter(produto__mg='6mg ').order_by('produto')
+    item9mg = pedidos.items.filter(produto__mg='6mg').order_by('produto')
+    item12mg = pedidos.items.filter(produto__mg='12mg').order_by('produto')
+
+    context = {'clientes': clientes,
+               'vendedor': vendedor,
+               'produtos0mg': produtos0mg,
+               'produtos3mg': produtos3mg,
+               'produtos6mg': produtos6mg,
+               'produtos9mg': produtos9mg,
+               'produtos12mg': produtos12mg,
+               'item0mg':item0mg,
+               'item3mg':item3mg,
+               'item6mg':item6mg,
+               'item9mg':item9mg,
+               'item12mg':item12mg,
+               'pedidos': pedidos,
+
+               }
+
+
+    return render(request=request, template_name="imprimir.html",context=context)
+
+
 def mudar_status(request,cliente,pedido):
 
     if request.method == "POST":
