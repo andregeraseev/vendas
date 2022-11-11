@@ -18,14 +18,16 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from clientes.views import cadastro_com_endereco,cadastro_sem_endereco,cadastro_endereco,clientes
-from pedidos.views import pedido,pedidos,tirar_item,adicionar_item,mudar_status,imprimir
+from pedidos.views import pedido,pedidos,tirar_item,adicionar_item,mudar_status,imprimir,todos_pedidos
 from vendedores.views import login,logout,dashboard
 
 urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('clientes', clientes, name='clientes'),
+    path('pedidos', todos_pedidos, name='pedidos'),
     path('dashboard', dashboard, name='dashboard'),
+    path('', dashboard, name='dashboard'),
     path('cadastro_com_endereco', cadastro_com_endereco, name='cadastro_com_endereco'),
     path('cadastro_sem_endereco', cadastro_sem_endereco, name='cadastro_sem_endereco'),
     path('cadastro_endereco/<int:id>', cadastro_endereco, name='cadastro_endereco'),
@@ -35,6 +37,7 @@ urlpatterns = [
     path('pedido/<slug:cliente>/<int:pedido>/adicionar_item', adicionar_item, name='adicionar_item'),
     path('pedido/<slug:cliente>/<int:pedido>/mudar_status', mudar_status, name='mudar_status'),
     path('pedido/<slug:cliente>/<int:pedido>/imprimir', imprimir, name='imprimir'),
-    path('', login, name='login'),
+    path('accounts/login', login, name='login'),
+    path('logout', logout, name='logout'),
 
 ]   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

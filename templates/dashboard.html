@@ -7,8 +7,7 @@
 
 <div class="container border my-3">
     <div class="row p-3 bg-secondary text-white">
-        <div class="h3">Ola {{ request.user.username }}!
-            <br>
+        <div class="h3">
             Total de vendas pagas no mes R${{venda}}
             <br>
             Valor a receber de comição R${{comicao_pendente}}
@@ -28,19 +27,11 @@
 </div>
 
 
-<script>
-$(document).ready(function () {
-    $('#tabela_pedido').DataTable();
-});
 
-</script>
 
-<script>
-$(document).ready(function () {
-    $('#tabela_cliente').DataTable();
-});
 
-</script>
+
+
 
 
 {% endblock %}

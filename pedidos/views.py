@@ -8,9 +8,57 @@ from django.contrib import messages
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse
 from django.core import serializers
+from django.contrib.auth.decorators import login_required
+import datetime
 
 
 
+
+
+@login_required
+def todos_pedidos(request):
+    hoje = datetime.date.today()
+    mes_atual = hoje.strftime('%m')
+
+    clientes = Cliente.objects.filter(vendedor=request.user.id)
+    pedidos = Pedido.objects.filter(vendedor=request.user.id)
+    pedidos_pagos = Pedido.objects.filter(pagamento=True, vendedor=request.user.id,
+                                          created_at__gte=datetime.date(2022, int(mes_atual), 1),
+                                          created_at__lte=datetime.date(2022, int(mes_atual), 30))
+    pedidos_comicao_nao_paga = Pedido.objects.filter(pagamento=True, vendedor=request.user.id, recebido=False)
+    comicao_pendente = sum([pedido.comicao for pedido in pedidos_comicao_nao_paga])
+    items = Item.objects.filter(pedido__vendedor=request.user.id, pedido__pagamento=True)
+    # item_pedido = {item.produto : item.quantidade for item in items}
+
+    item_p = {}
+    for item in items:
+        item_novo = {item.produto: item.quantidade}
+        if item.produto in item_p:
+            print("existe", item.produto)
+            item_novo = {item.produto: item.quantidade + item_p[item.produto]}
+            item_p.update(item_novo)
+        else:
+            item_p.update(item_novo)
+
+    print(item_p)
+
+    venda = sum([pedido.valor_total for pedido in pedidos_pagos])
+
+    context = {
+        'item_p': item_p,
+        'comicao_pendente': comicao_pendente,
+        'venda': venda,
+        'pedidos_pagos': pedidos_pagos,
+        'pedidos': pedidos,
+        'clientes': clientes}
+
+    return render(request=request, template_name="todos_pedidos.html", context=context)
+
+
+
+
+
+@login_required
 def pedidos(request, cliente):
 
     clientes = Cliente.objects.filter(id=cliente)
@@ -42,20 +90,28 @@ def pedidos(request, cliente):
                 }
 
     if request.method == "POST":
-
+        vendedor_id = request.user.id
         cli = Cliente.objects.get(id=cliente)
-        ven = Vendedor.objects.get(id=1)
-        novo_pedido = Pedido(cliente= cli, vendedor=ven)
+        ven = Vendedor.objects.get(id=vendedor_id)
+        if not pedidos:
+            print("PRimeiRO Pedido")
+            novo_pedido = Pedido(cliente=cli, vendedor=ven, primeira_compra=True)
+            novo_pedido.save()
+            return redirect(f"/pedido/{cli.slug}/{novo_pedido.id}")
+        else:
+            print("JA TEM PEDIDOS")
+            novo_pedido = Pedido(cliente= cli, vendedor=ven)
+            novo_pedido.save()
+            return redirect(f"/pedido/{cli.slug}/{novo_pedido.id}")
 
-        novo_pedido.save()
-
+        return render(request=request, template_name="pedidos.html", context=context)
 
     return render(request=request, template_name="pedidos.html",context= context)
 
 
 
 
-
+@login_required
 def pedido(request,cliente,pedido):
     clientes = Cliente.objects.filter(slug=cliente)
     vendedor = Vendedor.objects.all()
@@ -126,7 +182,7 @@ def pedido(request,cliente,pedido):
 
 
 
-
+@login_required
 def imprimir(request,cliente,pedido):
     clientes = Cliente.objects.filter(slug=cliente)
     vendedor = Vendedor.objects.all()
@@ -161,7 +217,7 @@ def imprimir(request,cliente,pedido):
 
     return render(request=request, template_name="imprimir.html",context=context)
 
-
+@login_required
 def mudar_status(request,cliente,pedido):
 
     if request.method == "POST":
@@ -211,7 +267,7 @@ def mudar_status(request,cliente,pedido):
 #                 status=False)
 #             messages.error(request, 'Pedido Aberto', 'success')
 #     return redirect(f"/pedido/{cliente}/{pedido}")
-
+@login_required
 def tirar_item(request,cliente,pedido):
     if request.method == 'POST':  # REMOVER PRODUTO
         try:
@@ -226,7 +282,7 @@ def tirar_item(request,cliente,pedido):
             messages.error(request, 'Este pedido esta fechado, voce nao pode remover items', 'danger')
             return  redirect(f"/pedido/{cliente}/{pedido}")
 
-
+@login_required
 def adicionar_item(request,cliente,pedido):
     # pedidos = serializers.serialize('json',Pedido.objects.filter(pk=pedido))
     pedidos = Pedido.objects.filter(pk=pedido)

@@ -4,12 +4,36 @@ from .forms import EnderecoForm, ClienteForm
 from vendedores.models import Vendedor
 from django.contrib import messages
 from pedidos.models import Pedido,Item
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def clientes(request):
-    clientes = Cliente.objects.all()
-    return render(request=request, template_name="clientes.html",
-                  context={ 'clientes': clientes})
+    clientes = Cliente.objects.filter(vendedor=request.user.id)
 
+
+    # if request.method == "POST":#adiciona pedido para cliente
+    #
+    #     cliente = request.POST['cliente_id']
+    #     print(cliente)
+    #     vendedor_id = request.user.id
+    #     cli = Cliente.objects.get(id=cliente)
+    #     ven = Vendedor.objects.get(id=vendedor_id)
+    #     pedidos = Pedido.objects.filter(cliente_id=cliente)
+    #     if not pedidos:
+    #         print("PRimeiRO Pedido")
+    #         novo_pedido = Pedido(cliente=cli, vendedor=ven, primeira_compra=True)
+    #         novo_pedido.save()
+    #         return redirect(f"/pedido/{cli.slug}/{novo_pedido.id}")
+    #     else:
+    #         print("JA TEM PEDIDOS")
+    #         novo_pedido = Pedido(cliente=cli, vendedor=ven)
+    #         novo_pedido.save()
+    #         return redirect(f"/pedido/{cli.slug}/{novo_pedido.id}")
+    #     return redirect(f"/pedido/{cli.slug}/{novo_pedido.id}")
+
+
+    return render(request=request, template_name="clientes.html", context={ 'clientes': clientes})
+@login_required
 def cadastro_sem_endereco(request):
     if request.method == "POST":
         cliente_form = ClienteForm(request.POST)
@@ -24,7 +48,7 @@ def cadastro_sem_endereco(request):
     return render(request=request, template_name="cadastro_sem_endereco.html",
                   context={ 'cliente_form': cliente_form})
 
-
+@login_required
 def cadastro_com_endereco(request):
     if request.method == "POST":
         cliente_form = ClienteForm(request.POST)
@@ -84,6 +108,7 @@ def cadastro_com_endereco(request):
     endereco = Endereco.objects.all()
     return render(request=request, template_name="cadastro_com_endereco.html", context={'endereco_form': endereco_form, 'endereco': endereco, 'cliente_form':cliente_form})
 
+@login_required
 def cadastro_endereco(request, id):
     if request.method == "POST":
         cliente = Cliente.objects.get(id=id)

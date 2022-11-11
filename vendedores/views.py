@@ -4,7 +4,9 @@ from django.contrib.auth.models import User
 from clientes.models import Cliente
 from pedidos.models import Pedido,Item
 import datetime
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def dashboard(request):
     hoje = datetime.date.today()
     mes_atual = hoje.strftime('%m')

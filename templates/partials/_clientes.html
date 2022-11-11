@@ -1,36 +1,48 @@
-
 <div class="container my-5 border">
-  <div class="row bg-danger"><h4 class="text-white text-center">CLIENTES</h4></div>
+    <div class="row bg-danger"><h4 class="text-white text-center">CLIENTES</h4></div>
 
-  <table class="table table-striped table-responsive" id="tabela_cliente">
-    <thead>
-    <tr>
-      <th>ID</th>
-      <th>NOME</th>
-      <th>CPF</th>
-      <th>TELEFONE</th>
-      <th>EMAIL</th>
-      <th>Pedidos</th>
-      <th>ADICONAR ENDEREÇO</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for cliente in clientes %}
-    <tr>
-      <td>{{ cliente.id }}</td>
-      <td>{{ cliente.nome }}</td>
-      <td>{{ cliente.cpf }}</td>
-      <td>{{ cliente.telefone }}</td>
-      <td>{{ cliente.email }}</td>
-      <td><a name="" id="" class="btn btn-primary" href="/pedidos/{{cliente.id}}" role="button">pedidos</a></td>
-      <td><a name="adicionar_endereço" id="adicionar_endereço" class="btn btn-primary"
-             href="cadastro_endereco/{{ cliente.id }}" role="button">adicionar endereço</a></td>
-
-    </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+    <table class="table table-striped table-responsive" id="tabela_cliente">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>NOME</th>
+            <th>CPF</th>
+            <th>TELEFONE</th>
+            <th>EMAIL</th>
+            <th>Pedidos</th>
+            <th>Adicionar endereço</th>
+            <th>Adicionar Pedido</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for cliente in clientes %}
+        <tr>
+            <td>{{ cliente.id }}</td>
+            <td>{{ cliente.nome }}</td>
+            <td>{{ cliente.cpf }}</td>
+            <td>{{ cliente.telefone }}</td>
+            <td>{{ cliente.email }}</td>
+            <td><a name="" id="" class="btn btn-primary" href="/pedidos/{{cliente.id}}" role="button">pedidos</a></td>
+            <td><a name="adicionar_endereço" id="adicionar_endereço" class="btn btn-primary"
+                   href="cadastro_endereco/{{ cliente.id }}" role="button">adicionar endereço</a></td>
+            <td>
+                <form method="post" action="/pedidos/{{cliente.id}}">
+                    {% csrf_token %}
+                    <input type="hidden" name="cliente_id" value="{{cliente.id}}">
+                    <button type="submit" class="btn btn-primary">Adicionar pedido</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 
+<script>
+$(document).ready(function () {
+    $('#tabela_cliente').DataTable();
+});
 
+
+</script>
 
