@@ -3,7 +3,7 @@ from .models import Endereco, Cliente
 from .forms import EnderecoForm, ClienteForm
 from vendedores.models import Vendedor
 from django.contrib import messages
-
+from pedidos.models import Pedido,Item
 
 def clientes(request):
     clientes = Cliente.objects.all()

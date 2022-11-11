@@ -30,6 +30,7 @@ class Pedido(models.Model):
     status = models.BooleanField(default=False)
     pagamento = models.BooleanField(default=False)
     primeira_compra = models.BooleanField(default=False)
+    recebido = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.pk)

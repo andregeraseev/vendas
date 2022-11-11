@@ -18,7 +18,23 @@ def pedidos(request, cliente):
     produtos = Juice.objects.all()
     pedidos = Pedido.objects.filter(cliente_id=cliente)
     item = Item.objects.all()
-    context = {'clientes': clientes,
+    items_mais_vendidos = Item.objects.filter(pedido__vendedor=request.user.id, pedido__pagamento=True,pedido__cliente__id=cliente)
+
+    item_p = {}
+    for item in items_mais_vendidos:
+        item_novo = {item.produto: item.quantidade}
+        if item.produto in item_p:
+            print("existe", item.produto)
+            item_novo = {item.produto: item.quantidade + item_p[item.produto]}
+            item_p.update(item_novo)
+        else:
+            item_p.update(item_novo)
+
+
+    context = {
+
+        'item_p':item_p,
+        'clientes': clientes,
                 'vendedor': vendedor,
                 'produtos': produtos,
                 'pedidos': pedidos,
