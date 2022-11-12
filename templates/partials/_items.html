@@ -19,6 +19,7 @@
                 <thead class='thead-default'>
                 <tr>
                     <th>Produto</th>
+                    <th>Quantidade</th>
                     <th>Valor unitario</th>
                     <th>Valor</th>
                     <th>Remover</th>
@@ -27,7 +28,8 @@
                 <tbody>
                 {% for item in pedido.items.all %}
                 <tr>
-                    <td scope='row'>{{ item }}</td>
+                    <td scope='row'>{{ item.produto.nome }} {{ item.produto.mg }}</td>
+                    <td>{{item.quantidade}}un</td>
                     <td>R${{item.valor_unitario}}</td>
                     <td>R${{item.valor_total}}</td>
                     <td>

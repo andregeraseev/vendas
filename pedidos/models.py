@@ -19,16 +19,28 @@ class Item(models.Model):
                 total.append(item.quantidade)
 
         quantidade= sum(total)
-        if quantidade >= 20 and quantidade <= 49:
-            return 22 * self.quantidade
-        elif quantidade >= 50 and quantidade <= 99:
-            return 20 * self.quantidade
-        elif quantidade >= 100 and quantidade <= 199:
-            return 18 * self.quantidade
-        elif quantidade >= 200:
-            return 17 * self.quantidade
+        if self.produto.mg == '9mg' or self.produto.mg == '12mg':
+            if quantidade >= 20 and quantidade <= 49:
+                return 24 * self.quantidade
+            elif quantidade >= 50 and quantidade <= 99:
+                return 22 * self.quantidade
+            elif quantidade >= 100 and quantidade <= 199:
+                return 20 * self.quantidade
+            elif quantidade >= 200:
+                return 19 * self.quantidade
+            else:
+                return self.quantidade * 27
         else:
-            return self.quantidade * 25
+            if quantidade >= 20 and quantidade <= 49:
+                return 22 * self.quantidade
+            elif quantidade >= 50 and quantidade <= 99:
+                return 20 * self.quantidade
+            elif quantidade >= 100 and quantidade <= 199:
+                return 18 * self.quantidade
+            elif quantidade >= 200:
+                return 17 * self.quantidade
+            else:
+                return self.quantidade * 25
 
     def valor_unitario(self):
         qr_item = [it.items.all() for it in self.pedido_set.all()]
@@ -38,16 +50,29 @@ class Item(models.Model):
                 total.append(item.quantidade)
 
         quantidade = sum(total)
-        if quantidade >= 20 and quantidade <= 49:
-            return 22
-        elif quantidade >= 50 and quantidade <= 99:
-            return 20
-        elif quantidade >= 100 and quantidade <= 199:
-            return 18
-        elif quantidade >= 200:
-            return 17
+
+        if self.produto.mg == '9mg' or self.produto.mg == '12mg':
+            if quantidade >= 20 and quantidade <= 49:
+                return 24
+            elif quantidade >= 50 and quantidade <= 99:
+                return 22
+            elif quantidade >= 100 and quantidade <= 199:
+                return 20
+            elif quantidade >= 200:
+                return 19
+            else:
+                return 27
         else:
-            return 25
+            if quantidade >= 20 and quantidade <= 49:
+                return 22
+            elif quantidade >= 50 and quantidade <= 99:
+                return 20
+            elif quantidade >= 100 and quantidade <= 199:
+                return 18
+            elif quantidade >= 200:
+                return 17
+            else:
+                return 25
 
 
 
@@ -74,17 +99,17 @@ class Pedido(models.Model):
 
     @property
     def valor_total(self):
-        quantidade= sum([int(item.quantidade) for item in self.items.all()])
-        if quantidade >=20 and quantidade  <=49:
-            return 22 * quantidade
-        elif quantidade >=50 and quantidade  <=99:
-            return 20 * quantidade
-        elif quantidade >=100 and quantidade  <=199:
-            return 18 * quantidade
-        elif quantidade >= 200:
-            return 17 * quantidade
-        else:
-            return quantidade * 25
+        return sum([int(item.valor_total) for item in self.items.all()])
+        # if quantidade >=20 and quantidade  <=49:
+        #     return 22 * quantidade
+        # elif quantidade >=50 and quantidade  <=99:
+        #     return 20 * quantidade
+        # elif quantidade >=100 and quantidade  <=199:
+        #     return 18 * quantidade
+        # elif quantidade >= 200:
+        #     return 17 * quantidade
+        # else:
+        #     return quantidade * 25
         # return sum([item.valor_total for item in self.items.all()])
 
     @property
