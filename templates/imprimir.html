@@ -1,7 +1,9 @@
+
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
 
 
 <div class="container mt-3">
@@ -11,6 +13,11 @@
             <div class="col-7">
                 <h5>XFLAVORS</h5>
                 <h6>VENDEDOR: {{ cliente.vendedor }}</h6>
+
+
+
+
+
             </div>
             <div class="col-5">
 
@@ -110,6 +117,14 @@
 
             </tbody>
         </table>
+        <div class="d-flex flex-row-reverse">
+          <div class="p-2">
+              <H6 class="my-3 text-right">
+                  Valor total: R${{ pedidos.valor_total }} <br>
+                  Unidades: {{pedidos.unidades_total}} <br>
+                  Peso: kg {{pedidos.peso}}</H6></div>
+        </div>
+
 
     </div>
 
