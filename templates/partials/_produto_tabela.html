@@ -1,6 +1,6 @@
 <tr>
     <td scope="row">{{produto.nome}} {{produto.mg}}</td>
-    <td>{{produto.valor}}</td>
+<!--    <td>{{produto.valor}}</td>-->
     <form method="post" id="add_item{{produto.id}}">
         {% csrf_token %}
         <div class="form-group">

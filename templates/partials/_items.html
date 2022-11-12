@@ -19,6 +19,7 @@
                 <thead class='thead-default'>
                 <tr>
                     <th>Produto</th>
+                    <th>Valor unitario</th>
                     <th>Valor</th>
                     <th>Remover</th>
                 </tr>
@@ -27,7 +28,8 @@
                 {% for item in pedido.items.all %}
                 <tr>
                     <td scope='row'>{{ item }}</td>
-                    <td>{{item.valor_total}}</td>
+                    <td>R${{item.valor_unitario}}</td>
+                    <td>R${{item.valor_total}}</td>
                     <td>
                     <form method='post' action='tirar_item'>
                         {% csrf_token %}
@@ -44,7 +46,8 @@
                 </tbody>
             </table>
 
-            <H4> Valor total: R${{ pedido.valor_total }}</H4>
+            <H4> Valor total: R${{ pedido.valor_total }} <br> Unidades: {{pedido.unidades_total}} <br> Peso: kg {{pedido.peso}}</H4>
+
 
 
                 <input name="" id="fechar" class="btn btn-primary" onclick="mudar_status()" type="button"
