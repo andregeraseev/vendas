@@ -12,11 +12,11 @@ def dashboard(request):
     mes_atual = hoje.strftime('%m')
 
     clientes = Cliente.objects.filter(vendedor=request.user.vendedor.id)
-    pedidos = Pedido.objects.filter(vendedor=request.user.id)
-    pedidos_pagos = Pedido.objects.filter(pagamento=True, vendedor=request.user.id, created_at__gte=datetime.date(2022,int(mes_atual),1), created_at__lte=datetime.date(2022,int(mes_atual),30))
-    pedidos_comicao_nao_paga = Pedido.objects.filter(pagamento=True, vendedor=request.user.id, recebido=False)
+    pedidos = Pedido.objects.filter(vendedor=request.user.vendedor.id)
+    pedidos_pagos = Pedido.objects.filter(pagamento=True, vendedor=request.user.vendedor.id, created_at__gte=datetime.date(2022,int(mes_atual),1), created_at__lte=datetime.date(2022,int(mes_atual),30))
+    pedidos_comicao_nao_paga = Pedido.objects.filter(pagamento=True, vendedor=request.user.vendedor.id, recebido=False)
     comicao_pendente = sum([pedido.comicao for pedido in pedidos_comicao_nao_paga])
-    items = Item.objects.filter(pedido__vendedor=request.user.id, pedido__pagamento=True)
+    items = Item.objects.filter(pedido__vendedor=request.user.vendedor.id, pedido__pagamento=True)
     # item_pedido = {item.produto : item.quantidade for item in items}
 
     item_p = {}

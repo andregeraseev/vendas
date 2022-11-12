@@ -27,7 +27,7 @@ def todos_pedidos(request):
                                           created_at__lte=datetime.date(2022, int(mes_atual), 30))
     pedidos_comicao_nao_paga = Pedido.objects.filter(pagamento=True, vendedor=request.user.vendedor.id, recebido=False)
     comicao_pendente = sum([pedido.comicao for pedido in pedidos_comicao_nao_paga])
-    items = Item.objects.filter(pedido__vendedor=request.user.id, pedido__pagamento=True)
+    items = Item.objects.filter(pedido__vendedor=request.user.vendedor.id, pedido__pagamento=True)
     # item_pedido = {item.produto : item.quantidade for item in items}
 
     item_p = {}
