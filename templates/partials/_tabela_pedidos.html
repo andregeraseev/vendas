@@ -18,14 +18,14 @@
             {% for pedido in pedidos %}
             <tr>
                 <td>{{ pedido.id }}</td>
-                <td>{{ pedido.cliente.nome }}</td>
-                <td>{% if pedido.status == True %} FECHADO {% else %} ABERTO {% endif %}</td>
+                <td><a  class="btn btn-primary" href="/pedidos/{{ pedido.cliente.id }}" role="button">{{ pedido.cliente.nome }}</a></td>
+                <td>{% if pedido.status == True %}<h5><span class="badge bg-success py-auto">FECHADO</span></h5>  {% else %}<h5><span class="badge bg-warning py-auto">ABERTO</span></h5>  {% endif %}</td>
                 <td>R$ {{ pedido.valor_total }}</td>
                 <td>R$ {{ pedido.comicao }}</td>
-                <td><a name="" id="" class="btn btn-primary" href="/pedido/{{pedido.cliente.slug}}/{{pedido.id}}"
-                       role="button">pedidos</a></td>
-                <td>{% if pedido.pagamento == False %} Pagamento Pendente {% else %} PAGO {% endif %}</td>
-                <td>{% if pedido.recebido == False %} Pagamento Pendente {% else %} PAGO {% endif %}</td>
+                <td><a name="" id="" class="btn btn-primary py-auto" href="/pedido/{{pedido.cliente.slug}}/{{pedido.id}}"
+                       role="button">Ver Pedido</a></td>
+                <td>{% if pedido.pagamento == False %}<h5><span class="badge bg-danger py-auto">Pagamento Pendente</span></h5> {% else %} <h5><span class="badge bg-success py-auto">PAGO</span></h5> {% endif %}</td>
+                <td>{% if pedido.recebido == False %} <h5><span class="badge bg-danger py-auto">Pagamento Pendente</span></h5> {% else %} <h5><span class="badge bg-success py-auto">PAGO</span></h5> {% endif %}</td>
 
             </tr>
             {% endfor %}
