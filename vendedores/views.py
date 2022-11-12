@@ -11,7 +11,7 @@ def dashboard(request):
     hoje = datetime.date.today()
     mes_atual = hoje.strftime('%m')
 
-    clientes = Cliente.objects.filter(vendedor=request.user.id)
+    clientes = Cliente.objects.filter(vendedor=request.user.vendedor.id)
     pedidos = Pedido.objects.filter(vendedor=request.user.id)
     pedidos_pagos = Pedido.objects.filter(pagamento=True, vendedor=request.user.id, created_at__gte=datetime.date(2022,int(mes_atual),1), created_at__lte=datetime.date(2022,int(mes_atual),30))
     pedidos_comicao_nao_paga = Pedido.objects.filter(pagamento=True, vendedor=request.user.id, recebido=False)

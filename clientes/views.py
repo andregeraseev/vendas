@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def clientes(request):
-    clientes = Cliente.objects.filter(vendedor=request.user.id)
+    clientes = Cliente.objects.filter(vendedor=request.user.vendedor.id)
 
 
     # if request.method == "POST":#adiciona pedido para cliente
