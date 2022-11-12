@@ -56,7 +56,8 @@ def cadastro_com_endereco(request):
 
         if endereco_form.is_valid() and cliente_form.is_valid():
 
-            vendedor_id =  request.user.id
+            vendedor_id =  request.user.vendedor.id
+            print(vendedor_id)
             vendedor =  Vendedor.objects.get(id=vendedor_id)
             print(vendedor)
             nome = cliente_form.cleaned_data['nome']
