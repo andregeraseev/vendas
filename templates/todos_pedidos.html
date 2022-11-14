@@ -3,5 +3,9 @@
 {% block content %}
 
 {% include 'partials/_tabela_pedidos.html' %}
+{% include 'partials/_tabela_UF_mais_vendidos.html' %}
+
+
+{{ request.user.vendedor.endereco_cliente }}
 
 {% endblock %}

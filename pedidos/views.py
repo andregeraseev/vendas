@@ -19,7 +19,7 @@ import datetime
 def todos_pedidos(request):
     hoje = datetime.date.today()
     mes_atual = hoje.strftime('%m')
-
+    vendedor = Vendedor.objects.filter(id=request.user.vendedor.id)
     clientes = Cliente.objects.filter(vendedor=request.user.vendedor.id)
     pedidos = Pedido.objects.filter(vendedor=request.user.vendedor.id)
     pedidos_pagos = Pedido.objects.filter(pagamento=True, vendedor=request.user.vendedor.id,
@@ -40,11 +40,27 @@ def todos_pedidos(request):
         else:
             item_p.update(item_novo)
 
-    print(item_p)
+    uf_cont = {}
+
+    for cliente in clientes:
+        for endereco in cliente.endereco_set.all():
+            if not endereco.uf in uf_cont:
+
+                uf = {endereco.uf: 1}
+                uf_cont.update(uf)
+
+            else:
+
+                uf = {endereco.uf: 1 + uf_cont[endereco.uf]}
+                uf_cont.update(uf)
+    print(uf_cont, item_p)
+
 
     venda = sum([pedido.valor_total for pedido in pedidos_pagos])
 
     context = {
+        'uf_cont':uf_cont,
+        'vendedor' : vendedor,
         'item_p': item_p,
         'comicao_pendente': comicao_pendente,
         'venda': venda,

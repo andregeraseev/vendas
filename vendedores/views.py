@@ -23,14 +23,14 @@ def dashboard(request):
     for item in items:
         item_novo ={item.produto: item.quantidade}
         if item.produto in item_p:
-            print("existe", item.produto)
+            # print("existe", item.produto)
             item_novo= {item.produto : item.quantidade + item_p[item.produto]}
             item_p.update(item_novo)
         else:
             item_p.update(item_novo)
 
 
-    print(item_p)
+    # print(item_p)
 
     venda=  sum([pedido.valor_total for pedido in pedidos_pagos])
 
@@ -64,7 +64,7 @@ def login(request):
 
             if user is not None:
                 auth.login(request, user)
-                print('Login realizado com sucesso')
+                # print('Login realizado com sucesso')
                 return redirect('dashboard')
             # erro senha errada
             else:

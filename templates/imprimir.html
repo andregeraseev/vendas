@@ -22,7 +22,7 @@
             <div class="col-5">
 
                 <h5>CLIENTE: {{ cliente.nome }}</h5>
-
+                <h6>CPF: {{ cliente.cpf}}</h6>
                 {% for endereco in cliente.endereco_set.all %}
                 <h6>Endereço: {{ endereco.apelido}}</h6>
                 <h6>Logradouro: {{ endereco.logradouro}} Numero: {{ endereco.numero}}</h6>

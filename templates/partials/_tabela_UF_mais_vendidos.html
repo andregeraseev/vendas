@@ -1,0 +1,24 @@
+<div class="container py-3 border">
+    <div class="row bg-danger my-3 "><h4 class="text-white text-center">Vendas por estado</h4></div>
+    <table class="table table-striped  table-responsive py-3 ">
+        <thead class="thead-inverse">
+        <tr>
+            <th>Posição</th>
+            <th>Produto</th>
+            <th>Quantidade</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item, quantidade in uf_cont.items|dictsortreversed:-1 %}
+
+
+        <tr>
+            <td scope="row">#{{ forloop.counter }}</td>
+            <td>{{item}}</td>
+            <td>{{quantidade}}</td>
+        </tr>
+        {%endfor%}
+        </tbody>
+    </table>
+</div>
+</div>

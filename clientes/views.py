@@ -57,9 +57,9 @@ def cadastro_com_endereco(request):
         if endereco_form.is_valid() and cliente_form.is_valid():
 
             vendedor_id =  request.user.vendedor.id
-            print(vendedor_id)
+            # print(vendedor_id)
             vendedor =  Vendedor.objects.get(id=vendedor_id)
-            print(vendedor)
+            # print(vendedor)
             nome = cliente_form.cleaned_data['nome']
             telefone = cliente_form.cleaned_data['telefone']
             email = cliente_form.cleaned_data['email']
@@ -113,7 +113,7 @@ def cadastro_com_endereco(request):
 def cadastro_endereco(request, id):
     if request.method == "POST":
         cliente = Cliente.objects.get(id=id)
-        print(cliente)
+        # print(cliente)
         endereco_form = EnderecoForm(request.POST)
 
         if endereco_form.is_valid():
