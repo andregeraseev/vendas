@@ -17,6 +17,7 @@ $(document).ready(function(event) {
                         'quantidade' : quantidade,
                         'id_produto' : id_produto,
 
+
                     },
                     success: function (data) {
                     $('#pedido_carrinho').html(data);

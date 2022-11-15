@@ -1,0 +1,47 @@
+<tr>
+    <td scope="row" style="width: 30%"><h5>{{produto.nome}}</h5></td>
+<!--    _produto_tabela.html-->
+    <form method="Post" >
+        {% csrf_token %}
+        <div class="form-group ">
+            <input type="hidden" class="form-control" name="pedido"
+                   id="pedido{{produto.id}}" value="1">
+            <input type="hidden" class="form-control" name="id_produto"
+                   id="produto{{produto.id}}"
+                   value="{{ produto.nome }}">
+            <td style="width: 10%">
+
+
+                    <input type="number"
+                           class="form-control quantidade{{produto.id}}" name="quantidade"
+                           id="quantidade{{produto.id}}" value="0" placeholder="">
+
+            </td>
+
+            <td style="vertical-align: middle; width: 40%" align='center'>
+
+                <input  type="radio" name="mg" id="zeromg" value="0mg"><h2 class=" text-dark badge badge-primary">0mg</h2>
+                <input type="radio" name="mg" id="tresmg" value="3mg"><h2 class=" text-dark badge badge-primary">3mg</h2>
+                <input type="radio" name="mg" id="seismg" value="6mg"><h2 class=" text-dark badge badge-primary">6mg</h2>
+                <input type="radio" name="mg" id="novemg" value="9mg"><h2 class=" text-dark badge badge-primary">9mg</h2>
+                <input type="radio" name="mg" id="dozemg" value="12mg"><h2 class=" text-dark badge badge-primary">12mg</h2>
+<!--                <input type="checkbox" name="zeromg" id="zeromg"> 0mg-->
+<!--                <input type="checkbox" name="tresmg" id="tresmg"> 3mg-->
+<!--                <input type="checkbox" name="seismg" id="seismg"> 6mg-->
+<!--                <input type="checkbox" name="novemg" id="novemg"> 9mg-->
+<!--                <input type="checkbox" name="dozemg" id="dozemg"> 12mg-->
+
+
+
+            </td>
+
+            <td style="width: 10%"><button type="submit" class="btn btn-danger">Adicionar</button></td>
+        </div>
+
+
+    </form>
+</tr>
+
+<script>
+            {% include 'partials/add_item.js' %}
+            </script>

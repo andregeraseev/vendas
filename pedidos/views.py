@@ -149,27 +149,51 @@ def pedido(request,cliente,pedido):
                'item': item,
                }
 
-    # if request.method == 'POST' and 'id_produto' in request.POST: #ADICONAR PRODUTO
-    #     try:
-    #         order = Pedido.objects.get(id=pedido, status= False)
-    #
-    #         quantidade = request.POST["quantidade"]
-    #         id_produto = request.POST["id_produto"]
-    #
-    #         if int(quantidade) <= 0:
-    #             messages.warning(request, 'A quantidade de items tem que ser maior que 0')
-    #         else:
-    #
-    #             produto = Juice.objects.get(pk=id_produto)
-    #             item = Item(produto=produto,
-    #                         quantidade=quantidade,
-    #                         )
-    #             item.save()
-    #
-    #             order.items.add(item)
-    #
-    #     except:
-    #         messages.error(request, 'Este pedido esta fechado, voce nao pode adicionar items', 'danger')
+    if request.method == 'POST' and 'id_produto' in request.POST: #ADICONAR PRODUTO
+
+        try:
+            order = Pedido.objects.get(id=pedido, status= False)
+
+            quantidade = request.POST["quantidade"]
+            id_produto = request.POST["id_produto"]
+            mg = request.POST.get('mg', False)
+            # tresmg = request.POST.get('tresmg', False)
+            # seismg = request.POST.get('seismg', False)
+            # novemg = request.POST.get('novemg', False)
+            # dozemg = request.POST.get('dozemg', False)
+            print
+            if mg:
+                print(mg)
+            else:
+                messages.warning(request, 'Escolha o mg')
+                return render(request=request, template_name="tirar_pedido.html", context=context)
+
+            print(order)
+            if int(quantidade) <= 0:
+                messages.warning(request, 'A quantidade de items tem que ser maior que 0')
+            else:
+
+                produto = Juice.objects.get(nome=id_produto, mg=mg)
+
+                if Item.objects.filter(pedido=order, produto__nome= id_produto, produto__mg=mg):
+
+                    item_update = Item.objects.filter(pedido=order, produto__nome=id_produto, produto__mg=mg)
+                    quantidade_update = int(Item.objects.get(pedido=order,
+                                                             produto__nome=id_produto,
+                                                             produto__mg=mg).quantidade) + int(quantidade)
+                    item_update.update(quantidade=quantidade_update)
+
+                else:
+
+                    item = Item(produto=produto,
+                                quantidade=quantidade,
+                                )
+                    item.save()
+
+                    order.items.add(item)
+
+        except:
+            messages.error(request, 'Este pedido esta fechado, voce nao pode adicionar items', 'danger')
 
     # if request.method == 'POST' and 'remover_id' in request.POST:  # REMOVER PRODUTO
     #     try:
@@ -194,7 +218,7 @@ def pedido(request,cliente,pedido):
     #             status=False)
     #         messages.error(request, 'Pedido Aberto', 'success')
 
-    return render(request=request, template_name="pedido.html",context=context)
+    return render(request=request, template_name="tirar_pedido.html",context=context)
 
 
 
@@ -210,8 +234,8 @@ def imprimir(request,cliente,pedido):
     pedidos = Pedido.objects.get(pk=pedido)
     item0mg = pedidos.items.filter(produto__mg='0mg').order_by('produto')
     item3mg = pedidos.items.filter(produto__mg='3mg').order_by('produto')
-    item6mg  = pedidos.items.filter(produto__mg='6mg ').order_by('produto')
-    item9mg = pedidos.items.filter(produto__mg='6mg').order_by('produto')
+    item6mg  = pedidos.items.filter(produto__mg='6mg').order_by('produto')
+    item9mg = pedidos.items.filter(produto__mg='9mg').order_by('produto')
     item12mg = pedidos.items.filter(produto__mg='12mg').order_by('produto')
 
     context = {'clientes': clientes,
@@ -303,11 +327,15 @@ def adicionar_item(request,cliente,pedido):
     # pedidos = serializers.serialize('json',Pedido.objects.filter(pk=pedido))
     pedidos = Pedido.objects.filter(pk=pedido)
     if request.method == 'POST':  # ADICONAR PRODUTO
+
         try:
             order = Pedido.objects.get(id=pedido, status=False)
 
             quantidade = request.POST["quantidade"]
             id_produto = request.POST["id_produto"]
+
+
+
             print(quantidade, id_produto)
             if int(quantidade) <= 0:
                 data = { "pedidos": pedidos}

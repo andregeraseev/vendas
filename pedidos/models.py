@@ -127,9 +127,9 @@ class Pedido(models.Model):
     @property
     def comicao(self):
         if self.primeira_compra == True:
-            return  int(self.valor_total) * 0.10
+            return  round(int(self.valor_total) * 0.10,2)
         else:
-            return int(self.valor_total) * 0.05
+            return round(int(self.valor_total) * 0.05,2)
 
 
 
