@@ -5,7 +5,7 @@
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
 {% load widget_tweaks %}
-<div class="container">
+<div class="container border my-5">
 
     <form method="post">
         {% csrf_token %}
@@ -26,8 +26,8 @@
             {% endfor %}
         </div>
         {% endif %}
-        <div class="row">
-            <div class="col-12 bg-danger my-2"><h2>CLIENTE</h2></div>
+        <div class="row ">
+            <div class="col-12 bg-danger  text-white text-center"><h3>CLIENTE</h3></div>
             {% for field in cliente_form.visible_fields %}
             <div class="form-group col-6">
                 {{ field.label_tag }}
@@ -54,7 +54,7 @@
             {% endfor %}
         </div>
         <div class="row">
-            <div class="col-12 bg-danger my-2"><h2>ENDEREÇO</h2></div>
+            <div class="col-12 bg-danger my-2 text-white text-center"><h3>ENDEREÇO</h3></div>
             {% for field in endereco_form.visible_fields %}
             <div class="form-group col-6">
                 {{ field.label_tag }}
@@ -86,9 +86,9 @@
                class="form-control" name="vendedor" value="{{ user.request.id }}">
 
 
-        <button type="submit" class="btn btn-primary my-4">Submit</button>
+        <button type="submit" class="btn btn-primary my-4">Cadastrar</button>
     </form>
-  <a class="btn btn-primary" href="/dashboard" role="button">dashboard</a>
+  <a class="btn btn-primary mb-2" href="/dashboard" role="button">dashboard</a>
 </div>
 
 <script type="text/javascript">

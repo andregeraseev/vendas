@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
-from clientes.models import Cliente
+from clientes.models import Cliente,Endereco
 from vendedores.models import Vendedor
 from produtos.models import Juice
 from pedidos.models import Pedido,Item
@@ -132,19 +132,23 @@ def pedido(request,cliente,pedido):
     clientes = Cliente.objects.filter(slug=cliente)
     vendedor = Vendedor.objects.all()
     produtos0mg = Juice.objects.filter(mg="0mg").order_by('nome')
-    produtos3mg = Juice.objects.filter(mg="3mg").order_by('nome')
-    produtos6mg = Juice.objects.filter(mg="6mg").order_by('nome')
-    produtos9mg = Juice.objects.filter(mg="9mg").order_by('nome')
-    produtos12mg = Juice.objects.filter(mg="12mg").order_by('nome')
+    enderecos = Endereco.objects.filter(cliente__slug=cliente)
+    endereco_ativo = Endereco.objects.filter(ativo= True, cliente__slug=cliente)
+    # produtos3mg = Juice.objects.filter(mg="3mg").order_by('nome')
+    # produtos6mg = Juice.objects.filter(mg="6mg").order_by('nome')
+    # produtos9mg = Juice.objects.filter(mg="9mg").order_by('nome')
+    # produtos12mg = Juice.objects.filter(mg="12mg").order_by('nome')
     pedidos = Pedido.objects.filter(pk=pedido)
     item = Item.objects.all()
     context = {'cliente': clientes,
                'vendedor': vendedor,
                'produtos0mg': produtos0mg,
-               'produtos3mg': produtos3mg,
-               'produtos6mg': produtos6mg,
-               'produtos9mg': produtos9mg,
-               'produtos12mg': produtos12mg,
+               'enderecos':enderecos,
+               'endereco_ativo':endereco_ativo,
+               # 'produtos3mg': produtos3mg,
+               # 'produtos6mg': produtos6mg,
+               # 'produtos9mg': produtos9mg,
+               # 'produtos12mg': produtos12mg,
                'pedidos': pedidos,
                'item': item,
                }
@@ -334,9 +338,6 @@ def adicionar_item(request,cliente,pedido):
             quantidade = request.POST["quantidade"]
             id_produto = request.POST["id_produto"]
 
-
-
-            print(quantidade, id_produto)
             if int(quantidade) <= 0:
                 data = { "pedidos": pedidos}
                 messages.error(request, '"quantidade inferior a 1"', 'danger')
@@ -399,3 +400,13 @@ def adicionar_item(request,cliente,pedido):
 
 
 
+def escolher_endereco(request,cliente,pedido):
+    if request.method == 'POST':  # Seleciona endereco
+
+            Endereco.objects.filter(cliente__slug=cliente).update(ativo=False)
+            endereco_ativo = request.POST["endereco_ativo"]
+            Endereco.objects.filter(id=endereco_ativo).update(ativo=True)
+
+            Pedido.objects.filter(id=pedido).update(endereco=endereco_ativo)
+
+    return redirect(f"/pedido/{cliente}/{pedido}")

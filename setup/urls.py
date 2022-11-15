@@ -18,7 +18,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from clientes.views import cadastro_com_endereco,cadastro_sem_endereco,cadastro_endereco,clientes
-from pedidos.views import pedido,pedidos,tirar_item,adicionar_item,mudar_status,imprimir,todos_pedidos
+from pedidos.views import pedido,pedidos,tirar_item,adicionar_item,mudar_status,imprimir,todos_pedidos,escolher_endereco
 from vendedores.views import login,logout,dashboard
 
 urlpatterns = [
@@ -35,6 +35,7 @@ urlpatterns = [
     path('pedido/<slug:cliente>/<int:pedido>/', pedido, name='pedido'),
     path('pedido/<slug:cliente>/<int:pedido>/tirar_item', tirar_item, name='tirar_item'),
     path('pedido/<slug:cliente>/<int:pedido>/adicionar_item', adicionar_item, name='adicionar_item'),
+    path('pedido/<slug:cliente>/<int:pedido>/escolher_endereco', escolher_endereco, name='escolher_endereco'),
     path('pedido/<slug:cliente>/<int:pedido>/mudar_status', mudar_status, name='mudar_status'),
     path('pedido/<slug:cliente>/<int:pedido>/imprimir', imprimir, name='imprimir'),
     path('accounts/login', login, name='login'),

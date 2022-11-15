@@ -13,5 +13,5 @@ class ClienteForm(forms.ModelForm):
 class EnderecoForm(forms.ModelForm):
      class Meta:
         model = Endereco
-        fields = ('apelido','cep','logradouro','numero','bairro','uf','complemento')
+        fields = ('destinatario','apelido','cep','logradouro','numero','bairro','uf','complemento')
         # widgets = {'cliente': forms.HiddenInput()}

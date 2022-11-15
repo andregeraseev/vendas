@@ -1,9 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-	<!--Importando Script Jquery-->
-	<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-
+<!--Importando Script Jquery-->
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
 
 <!--        <div class="container">-->
@@ -21,58 +20,57 @@
 <!--        </div>-->
 
 
-
-
 {% load widget_tweaks %}
-<div class="container">
+<div class="container ">
+    <div class=" p-3">
+        <form method="post">
+            {% csrf_token %}
+            {% for hidden_field in endereco_form.hidden_fields %}
+            {{ hidden_field }}
+            {% endfor %}
 
-  <form method="post" >
-    {% csrf_token %}
-    {% for hidden_field in endereco_form.hidden_fields %}
-      {{ hidden_field }}
-    {% endfor %}
-
-    {% if endereco_form.non_field_errors %}
-      <div class="alert alert-danger" role="alert">
-        {% for error in endereco_form.non_field_errors %}
-          {{ error }}
-        {% endfor %}
-      </div>
-    {% endif %}
-
-    <div class="row">
-      <div class="col-12 bg-danger my-2"> <h2>ENDEREÇO</h2></div>
-      {% for field in endereco_form.visible_fields %}
-        <div class="form-group col-6">
-          {{ field.label_tag }}
-
-          {% if endereco_form.is_bound %}
-            {% if field.errors %}
-              {% render_field field class="form-control is-invalid" %}
-              {% for error in field.errors %}
-                <div class="invalid-feedback">
-                  {{ error }}
-                </div>
-              {% endfor %}
-            {% else %}
-              {% render_field field class="form-control is-valid" %}
+            {% if endereco_form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in endereco_form.non_field_errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
             {% endif %}
-          {% else %}
-            {% render_field field class="form-control" %}
-          {% endif %}
 
-          {% if field.help_text %}
-            <small class="form-text text-muted">{{ field.help_text }}</small>
-          {% endif %}
-        </div>
-      {% endfor %}
+            <div class="row border pb-2">
+                <div class="col-12 bg-danger mb-2 text-white text-center"><h3>ENDEREÇO</h3></div>
+                {% for field in endereco_form.visible_fields %}
+                <div class="form-group col-6">
+                    {{ field.label_tag }}
+
+                    {% if endereco_form.is_bound %}
+                    {% if field.errors %}
+                    {% render_field field class="form-control is-invalid" %}
+                    {% for error in field.errors %}
+                    <div class="invalid-feedback">
+                        {{ error }}
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    {% render_field field class="form-control is-valid" %}
+                    {% endif %}
+                    {% else %}
+                    {% render_field field class="form-control" %}
+                    {% endif %}
+
+                    {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary my-2">Cadastrar</button>
+        </form>
+        <a class="btn btn-primary" href="/dashboard" role="button">dashboard</a>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
-  <a class="btn btn-primary" href="/dashboard" role="button">dashboard</a>
 </div>
 
-	<script type="text/javascript">
+<script type="text/javascript">
 		$("#id_cep").focusout(function(){
 			//Início do Comando AJAX
 			$.ajax({
@@ -100,7 +98,8 @@
 				}
 			});
 		});
-	</script>
+
+</script>
 
 
 {% endblock %}

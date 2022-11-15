@@ -1,6 +1,4 @@
-
-
-            <h2>ITEMS PEDIDO</h2>
+<h3 class="bg-danger p-3 text-center">ITEMS DO PEDIDO</h3>
 
 
 {% if messages %}
@@ -13,58 +11,94 @@
 
 {% endfor %}
 {% endif %}
-            {% for pedido in pedidos %}
+{% for pedido in pedidos %}
 
-            <table class='table table-striped table-inverse table-responsive'>
-                <thead class='thead-default'>
-                <tr>
-                    <th>Produto</th>
-                    <th>Quantidade</th>
-                    <th>Valor unitario</th>
-                    <th>Valor</th>
-                    <th>Remover</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in pedido.items.all %}
-                <tr>
-                    <td scope='row'>{{ item.produto.nome }} {{ item.produto.mg }}</td>
-                    <td>{{item.quantidade}}un</td>
-                    <td>R${{item.valor_unitario}}</td>
-                    <td>R${{item.valor_total}}</td>
-                    <td>
-                    <form method='post' action='tirar_item'>
-                        {% csrf_token %}
-                            <input type='hidden' class='form-control' name='pedido' id='pedido{{pedido.id}}' value='1'>
-                            <input type='hidden' class='form-control' name='remover_id' id='{{ item.pk }}' value='{{ item.pk }}'>
+<table class='table table-striped table-inverse table-responsive'>
+    <thead class='thead-default'>
+    <tr>
+        <th>Produto</th>
+        <th>Unidades</th>
+        <th>Valor</th>
+        <th>Total</th>
+        <th>Remover</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in pedido.items.all %}
+    <tr>
+        <td scope='row'>{{ item.produto.nome }} {{ item.produto.mg }}</td>
+        <td>{{item.quantidade}}un</td>
+        <td>R${{item.valor_unitario}}</td>
+        <td>R${{item.valor_total}}</td>
+        <td>
+            <form method='post' action='tirar_item'>
+                {% csrf_token %}
+                <input type='hidden' class='form-control' name='pedido' id='pedido{{pedido.id}}' value='1'>
+                <input type='hidden' class='form-control' name='remover_id' id='{{ item.pk }}' value='{{ item.pk }}'>
 
-                                <button type='submit' name='deletar' class='btn btn-danger btn-sm'>Remover</button>
+                <button type='submit' name='deletar' class='btn btn-danger btn-sm'>Remover</button>
 
-                    </form>
-                    </td>
-                </tr>
-                {% endfor %}
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
 
-                </tbody>
-            </table>
+    </tbody>
 
-            <H4> Valor total: R${{ pedido.valor_total }} <br> Unidades: {{pedido.unidades_total}} <br> Peso: kg {{pedido.peso}}</H4>
+</table>
+<table class="table">
 
+    <tbody>
+    <tr>
+        <td class="h5">Valor total: R${{ pedido.valor_total }}</td>
+        <td class="h5">Unidades: {{pedido.unidades_total}}</td>
+        <td class="h5">Peso: kg {{pedido.peso}}</td>
+    </tr>
 
-
-                <input name="" id="fechar" class="btn btn-primary" onclick="mudar_status()" type="button"
-                       value="{% if pedido.status == True %} ABRIR PEDIDO {% else %}  FECHAR PEDIDO {% endif %}">
-
-            </div>
-            <br>
-
-</div>
-        </div>
-
+    </tbody>
+</table>
 
 
+<input name="" id="fechar" class="btn btn-primary" onclick="mudar_status()" type="button"
+       value="{% if pedido.status == True %} ABRIR PEDIDO {% else %}  FECHAR PEDIDO {% endif %}">
+<a class="btn btn-primary" href="imprimir" role="button">imprimir</a>
+<a class="btn btn-primary" href="/pedidos/{% for client in cliente %}{{ client.id }}{% endfor %}" role="button">voltar
+    para pedidos do cliente</a>
+
+<br>
+
+<div class="container border my-3">
+    <div class="row bg-danger text-center mb-3">
+        <h3>ENDEREÇO DE ENVIO</h3>
+    </div>
+    {% for endereco in endereco_ativo %}
+    <div class="p-3">
+        <h5>{{ endereco }}</h5>
+
+        <h6>Destinatario: {{ endereco.destinatario_auto }}</h6>
+        <h6>Endereço: {{ endereco.logradouro }}, Numero: {{ endereco.numero }}</h6>
+        <h6>Bairro: {{ endereco.bairro }}, Estado: {{ endereco.uf }}</h6>
+        <h6> CEP: {{ endereco.cep }} </h6>
+        <h6>Complemento: {{ endereco.complemento }} </h6>
     </div>
 
+
+    </ul>
+{% endfor %}
+</div>
+<form method="Post" action="escolher_endereco">
+    {% csrf_token %}
+    <div class="form-group">
+        {% for endereco in enderecos %}
+        <label for="endereco_ativo"></label>
+
+        <input type="radio" name="endereco_ativo" id="endereco_ativo" value="{{ endereco.id }}">
+        <h2 class=" text-dark badge badge-primary">{{ endereco.apelido }}</h2><br>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Escolher Endereço</button>
+
+    </div>
+</form>
 
 {% endfor %}
 
@@ -75,6 +109,7 @@
     setTimeout(function() {
                 $("#alert").remove();
             }, 5000);
+
 </script>
 <script>
     function mudar_status() {
@@ -104,6 +139,7 @@
         })
 
     }
+
 
 </script>
 

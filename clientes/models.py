@@ -57,6 +57,7 @@ class Endereco(models.Model):
 
 
     cliente = models.ForeignKey(Cliente, on_delete= models.CASCADE)
+    destinatario = models.CharField(max_length= 30, null=True, blank=True)
     apelido = models.CharField(max_length= 30, default= 'Endereço principal', blank=True)
     cep = models.IntegerField()
     logradouro = models.CharField(max_length=150)
@@ -66,9 +67,19 @@ class Endereco(models.Model):
     complemento = models.CharField(max_length=30)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
+    ativo = models.BooleanField(default=False)
 
     def __str__(self):
         return self.cliente.nome + ' ' + self.apelido
+
+    @property
+    def destinatario_auto(self):
+        if self.destinatario == None:
+            return self.cliente.nome
+        else:
+            return self.destinatario
+
+
 
 
 

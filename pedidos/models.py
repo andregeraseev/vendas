@@ -1,5 +1,5 @@
 from django.db import models
-from clientes.models import Cliente
+from clientes.models import Cliente,Endereco
 from vendedores.models import Vendedor
 from produtos.models import Juice
 
@@ -93,7 +93,7 @@ class Pedido(models.Model):
     pagamento = models.BooleanField(default=False)
     primeira_compra = models.BooleanField(default=False)
     recebido = models.BooleanField(default=False)
-
+    endereco = models.ForeignKey(Endereco, null=True, on_delete=models.CASCADE)
     def __str__(self):
         return str(self.pk)
 

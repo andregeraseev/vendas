@@ -1,9 +1,7 @@
-
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-
 
 
 <div class="container mt-3">
@@ -13,24 +11,18 @@
             <div class="col-7">
                 <h5>XFLAVORS</h5>
                 <h6>VENDEDOR: {{ cliente.vendedor }}</h6>
-
-
-
-
-
+                {% endfor %}
+                <h6>Data do pedido: {{ pedidos.created_at|date:" d/m/Y" }}</h6>
             </div>
             <div class="col-5">
 
-                <h5>CLIENTE: {{ cliente.nome }}</h5>
-                <h6>CPF: {{ cliente.cpf}}</h6>
-                {% for endereco in cliente.endereco_set.all %}
-                <h6>Endereço: {{ endereco.apelido}}</h6>
-                <h6>Logradouro: {{ endereco.logradouro}} Numero: {{ endereco.numero}}</h6>
-                <h6>Bairro: {{ endereco.bairro}} Estado: {{ endereco.uf}}</h6>
-                <h6>cep: {{ endereco.cep}}</h6>
-                <h6>complemento: {{ endereco.complemento}}</h6>
-                {% endfor %}
-                {% endfor %}
+                <h5>CLIENTE: {{ pedidos.endereco.cliente.nome}}</h5>
+                <h6>CPF: {{ pedidos.endereco.cliente.cpf }}</h6>
+                <h6>Logradouro: {{ pedidos.endereco.logradouro}} Numero: {{ pedidos.endereco.numero}}</h6>
+                <h6>Bairro: {{ pedidos.endereco.bairro}} Estado: {{ pedidos.endereco.uf}}</h6>
+                <h6>cep: {{ pedidos.endereco.cep}}</h6>
+                <h6>complemento: {{ pedidos.endereco.complemento}}</h6>
+
 
             </div>
         </div>
@@ -118,11 +110,11 @@
             </tbody>
         </table>
         <div class="d-flex flex-row-reverse">
-          <div class="p-2">
-              <H6 class="my-3 text-right">
-                  Valor total: R${{ pedidos.valor_total }} <br>
-                  Unidades: {{pedidos.unidades_total}} <br>
-                  Peso: kg {{pedidos.peso}}</H6></div>
+            <div class="p-2">
+                <H6 class="my-3 text-right">
+                    Valor total: R${{ pedidos.valor_total }} <br>
+                    Unidades: {{pedidos.unidades_total}} <br>
+                    Peso: kg {{pedidos.peso}}</H6></div>
         </div>
 
 
@@ -145,6 +137,7 @@ function printDiv(divName) {
 
      document.body.innerHTML = originalContents;
 }
+
 
 </script>
 
