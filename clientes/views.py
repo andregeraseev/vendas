@@ -3,12 +3,40 @@ from .models import Endereco, Cliente
 from .forms import EnderecoForm, ClienteForm
 from vendedores.models import Vendedor
 from django.contrib import messages
-from pedidos.models import Pedido,Item
+from pedidos.models import Pedido
 from django.contrib.auth.decorators import login_required
 
 @login_required
 def clientes(request):
     clientes = Cliente.objects.filter(vendedor=request.user.vendedor.id)
+
+    # # inicio pandas
+    # item = Items.objects.filter(pagamento=True, created_at__month=mes_atual,
+    #                              vendedor_id=request.user.vendedor.id).values('produto', 'quantidade')
+    # df = pd.DataFrame(item)
+    # # df['created_at'] = pd.to_datetime(df['created_at'])
+    # # df['created_at'] = df['created_at'].astype('datetime64[ns]')
+    # df['created_at'] = pd.to_datetime(df['created_at']).dt.date
+    # # df.groupby('created_at').sum()
+    #
+    # # df.groupby('valor').sum()
+    # # print(df.groupby('created_at').sum())
+    # # df['cliente'] = df['cliente'].astype(float)
+    # df['valor'] = df['valor'].astype(float)
+    #
+    # df.plot(x='created_at', y='valor', figsize=(13, 5), colormap='prism', grid=True)
+    # # df.plot( kind='bar', title='Vendas por mes', x='created_at', figsize=(15,5), colormap='prism')
+    # plt.title("Vendas do mes")
+    # plt.xlabel('data')
+    # plt.ylabel("valor");
+    # buffer = io.BytesIO()
+    # plt.savefig(buffer, format='png')
+    # buffer.seek(0)
+    # image_png = buffer.getvalue()
+    # buffer.close()
+    # graphic = base64.b64encode(image_png)
+    # graphic = graphic.decode('utf-8')
+    # # fim pandas
 
 
     # if request.method == "POST":#adiciona pedido para cliente

@@ -4,8 +4,8 @@ from pedidos.models import Pedido, Item
 
 
 class PedidoList(admin.ModelAdmin):
-    list_display = ['id','cliente','vendedor','valor_total','status','primeira_compra','pagamento','recebido']
-    list_editable = ('vendedor','status','primeira_compra','pagamento','recebido',)
+    list_display = ['id','cliente','vendedor','valor_total','status','primeira_compra','pagamento','recebido','created_at']
+    list_editable = ('vendedor','status','primeira_compra','pagamento','recebido')
     ordering = ('-created_at',)
     list_filter = ('cliente', 'vendedor', 'status','primeira_compra','pagamento',)
     list_per_page = 30

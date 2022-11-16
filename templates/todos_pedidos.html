@@ -2,9 +2,12 @@
 {% load static %}
 {% block content %}
 
+
 {% include 'partials/_tabela_pedidos.html' %}
 {% include 'partials/_tabela_UF_mais_vendidos.html' %}
-
+<div class="container text-center">
+<img src="data:image/png;base64,{{ graphic|safe }}">
+</div>
 
 {{ request.user.vendedor.endereco_cliente }}
 

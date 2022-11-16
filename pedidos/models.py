@@ -94,6 +94,7 @@ class Pedido(models.Model):
     primeira_compra = models.BooleanField(default=False)
     recebido = models.BooleanField(default=False)
     endereco = models.ForeignKey(Endereco, null=True, on_delete=models.CASCADE)
+    valor = models.DecimalField(max_digits=8,decimal_places=2, null=True, blank=True)
     def __str__(self):
         return str(self.pk)
 

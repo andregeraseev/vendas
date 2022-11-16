@@ -10,8 +10,11 @@ from django.http import JsonResponse
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
 import datetime
-
-
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import io
+import urllib, base64
 
 
 
@@ -19,9 +22,36 @@ import datetime
 def todos_pedidos(request):
     hoje = datetime.date.today()
     mes_atual = hoje.strftime('%m')
+    # inicio pandas
+    item = Pedido.objects.filter(pagamento=True, created_at__month=mes_atual, vendedor_id=request.user.vendedor.id).values('created_at','valor')
+    df = pd.DataFrame(item)
+    # df['created_at'] = pd.to_datetime(df['created_at'])
+    # df['created_at'] = df['created_at'].astype('datetime64[ns]')
+    df['created_at'] = pd.to_datetime(df['created_at']).dt.date
+    # df.groupby('created_at').sum()
+
+    # df.groupby('valor').sum()
+    # print(df.groupby('created_at').sum())
+    # df['cliente'] = df['cliente'].astype(float)
+    df['valor'] = df['valor'].astype(float)
+
+    df.plot(x='created_at',y='valor',figsize=(13,5), colormap='prism', grid=True)
+    # df.plot( kind='bar', title='Vendas por mes', x='created_at', figsize=(15,5), colormap='prism')
+    plt.title("Vendas do mes")
+    plt.xlabel('data')
+    plt.ylabel("valor");
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    buffer.close()
+    graphic = base64.b64encode(image_png)
+    graphic = graphic.decode('utf-8')
+    #fim pandas
     vendedor = Vendedor.objects.filter(id=request.user.vendedor.id)
     clientes = Cliente.objects.filter(vendedor=request.user.vendedor.id)
     pedidos = Pedido.objects.filter(vendedor=request.user.vendedor.id)
+    pedidos_pagos_uf = Pedido.objects.filter(pagamento=True, vendedor=request.user.vendedor.id)
     pedidos_pagos = Pedido.objects.filter(pagamento=True, vendedor=request.user.vendedor.id,
                                           created_at__gte=datetime.date(2022, int(mes_atual), 1),
                                           created_at__lte=datetime.date(2022, int(mes_atual), 30))
@@ -34,7 +64,7 @@ def todos_pedidos(request):
     for item in items:
         item_novo = {item.produto: item.quantidade}
         if item.produto in item_p:
-            print("existe", item.produto)
+            # print("existe", item.produto)
             item_novo = {item.produto: item.quantidade + item_p[item.produto]}
             item_p.update(item_novo)
         else:
@@ -42,23 +72,24 @@ def todos_pedidos(request):
 
     uf_cont = {}
 
-    for cliente in clientes:
-        for endereco in cliente.endereco_set.all():
-            if not endereco.uf in uf_cont:
+    for pedido in pedidos_pagos_uf:
 
-                uf = {endereco.uf: 1}
+            if not pedido.endereco.uf in uf_cont:
+
+                uf = {pedido.endereco.uf: 1}
                 uf_cont.update(uf)
 
             else:
 
-                uf = {endereco.uf: 1 + uf_cont[endereco.uf]}
+                uf = {pedido.endereco.uf: 1 + uf_cont[pedido.endereco.uf]}
                 uf_cont.update(uf)
-    print(uf_cont, item_p)
+    # print(uf_cont, item_p)
 
 
     venda = sum([pedido.valor_total for pedido in pedidos_pagos])
 
     context = {
+        'graphic':graphic,
         'uf_cont':uf_cont,
         'vendedor' : vendedor,
         'item_p': item_p,
@@ -267,16 +298,21 @@ def mudar_status(request,cliente,pedido):
     if request.method == "POST":
 
         order = Pedido.objects.get(id=pedido)
-        print(order.status)
 
-        if order.status == False:
+
+        if order.status == False:#caso o pedido esteja aberto fecha o pedido e da o valor total
+
             orders = Pedido.objects.filter(id=pedido)
+            valor_total = order.valor_total
+            Pedido.objects.filter(id=pedido).update(valor=valor_total)
             orders.update(status=True)
             data = {'status': 'success','ativo': "ABRIR PEDIDO"}
             return JsonResponse(data, status=200)
 
         elif order.status == True:
+
             orders = Pedido.objects.filter(id=pedido)
+            Pedido.objects.filter(id=pedido).update(valor=None)
             orders.update(status=False)
             data = {'status': 'success', 'ativo':"FECHAR PEDIDO" }
             print( order.status)
@@ -332,13 +368,13 @@ def adicionar_item(request,cliente,pedido):
     pedidos = Pedido.objects.filter(pk=pedido)
     if request.method == 'POST':  # ADICONAR PRODUTO
 
-        try:
+        try:# caso o pedido esteja aberto
             order = Pedido.objects.get(id=pedido, status=False)
 
             quantidade = request.POST["quantidade"]
             id_produto = request.POST["id_produto"]
 
-            if int(quantidade) <= 0:
+            if int(quantidade) <= 0:# verifica se a quantidade eh maior que um
                 data = { "pedidos": pedidos}
                 messages.error(request, '"quantidade inferior a 1"', 'danger')
                 return render(request, 'partials/_items.html',  data)
@@ -357,7 +393,7 @@ def adicionar_item(request,cliente,pedido):
 
                 return render(request, 'partials/_items.html',  data)
 
-        except:
+        except:# caso o pedido esteja fechado nao deixa modificar
             data = {"pedidos": pedidos}
             messages.error(request, 'pedido fechado', 'success')
             return render(request, 'partials/_items.html',  data)
@@ -403,10 +439,10 @@ def adicionar_item(request,cliente,pedido):
 def escolher_endereco(request,cliente,pedido):
     if request.method == 'POST':  # Seleciona endereco
 
-            Endereco.objects.filter(cliente__slug=cliente).update(ativo=False)
+            Endereco.objects.filter(cliente__slug=cliente).update(ativo=False)#deixa todos endereços do cliente como ativo = False
             endereco_ativo = request.POST["endereco_ativo"]
-            Endereco.objects.filter(id=endereco_ativo).update(ativo=True)
+            Endereco.objects.filter(id=endereco_ativo).update(ativo=True)# endereço atual fica como Ativo
 
-            Pedido.objects.filter(id=pedido).update(endereco=endereco_ativo)
+            Pedido.objects.filter(id=pedido).update(endereco=endereco_ativo)# adiciona esse endereço ao pedido
 
     return redirect(f"/pedido/{cliente}/{pedido}")
