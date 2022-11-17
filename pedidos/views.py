@@ -300,13 +300,30 @@ def mudar_status(request,cliente,pedido):
         order = Pedido.objects.get(id=pedido)
 
 
-        if order.status == False:#caso o pedido esteja aberto fecha o pedido e da o valor total
+
+        if not order.endereco:
+            print(order.endereco)
+            try:
+                endereco_ativo = Endereco.objects.get(cliente__slug= cliente, ativo= True)
+                Pedido.objects.filter(id=pedido).update(endereco=endereco_ativo)
+                orders = Pedido.objects.filter(id=pedido)
+                valor_total = order.valor_total
+                Pedido.objects.filter(id=pedido).update(valor=valor_total)
+                orders.update(status=True)
+                data = {'status': 'success', 'ativo': "ABRIR PEDIDO", }
+                return JsonResponse(data, status=200)
+            except:
+                data = {'status': 'success', 'pedidofechado': 'escolha um endereco teste', 'ativo': "FECHAR PEDIDO"}
+                return JsonResponse(data, status=200)
+
+
+        elif order.status == False:#caso o pedido esteja aberto fecha o pedido e da o valor total
 
             orders = Pedido.objects.filter(id=pedido)
             valor_total = order.valor_total
             Pedido.objects.filter(id=pedido).update(valor=valor_total)
             orders.update(status=True)
-            data = {'status': 'success','ativo': "ABRIR PEDIDO"}
+            data = {'status': 'success','ativo': "ABRIR PEDIDO",}
             return JsonResponse(data, status=200)
 
         elif order.status == True:
@@ -315,7 +332,7 @@ def mudar_status(request,cliente,pedido):
             Pedido.objects.filter(id=pedido).update(valor=None)
             orders.update(status=False)
             data = {'status': 'success', 'ativo':"FECHAR PEDIDO" }
-            print( order.status)
+
             return JsonResponse(data, status=200)
 
         else:
@@ -395,7 +412,7 @@ def adicionar_item(request,cliente,pedido):
 
         except:# caso o pedido esteja fechado nao deixa modificar
             data = {"pedidos": pedidos}
-            messages.error(request, 'pedido fechado', 'success')
+            messages.error(request, 'pedido fechado', 'danger')
             return render(request, 'partials/_items.html',  data)
 
 

@@ -66,7 +66,7 @@
     para pedidos do cliente</a>
 
 <br>
-
+<div id="alert_placeholder"></div>
 <div class="container border my-3">
     <div class="row bg-danger text-center mb-3">
         <h3>ENDEREÇO DE ENVIO</h3>
@@ -98,6 +98,7 @@
         <button type="submit" class="btn btn-primary">Escolher Endereço</button>
 
     </div>
+
 </form>
 
 {% endfor %}
@@ -120,7 +121,10 @@
                 'csrfmiddlewaretoken': '{{ csrf_token }}',
             },
             success: function (data) {
-      $("#fechar").val(data.ativo)
+                                $("#fechar").val(data.ativo);
+                                console.log()
+                                if (data.pedidofechado) {showalert('Escolha um endereço', "alert-danger")}
+
       },
 
             error: function (data) {
@@ -130,16 +134,25 @@
                     },
 
         }).done(function(e){
+
             console.log("done")
 
         })
         .fail(function(e){
             console.log('error')
             console.log(e)
-        })
+        });
 
-    }
 
+    function showalert(message, alerttype) {
+
+            $('#alert_placeholder').append('<div id="alertdiv" class="alert ' +  alerttype + '" role="alert">' + message + '</div>');
+            setTimeout(function() {
+                $("#alertdiv").remove();
+            }, 5000);
+         }
+
+            }
 
 </script>
 
