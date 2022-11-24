@@ -28,7 +28,17 @@ def todos_pedidos(request):
     if request.method == "POST":
         data_inicio = request.POST["data_inicio"]
         data_fim = request.POST["data_fim"]
-        if data_inicio > data_fim:
+
+        ano_atual = int(data_inicio[6:10])
+        mes_atual = int(data_inicio[3:5])
+        incio_dia = int(data_inicio[0:2])
+        proximo_ano = int(data_fim[6:10])
+        proximo_mes = int(data_fim[3:5])
+        fim_dia = int(data_fim[0:2])
+        dias_no_mes = datetime.datetime(proximo_ano, proximo_mes, fim_dia) - datetime.datetime(ano_atual, mes_atual,
+                                                                                               incio_dia)
+
+        if dias_no_mes.days <= 0:
 
             incio_dia = 1
             mes_atual = int(hoje.strftime('%m'))
@@ -77,11 +87,11 @@ def todos_pedidos(request):
     else:
         item = [{'data': datetime.datetime(ano_atual, mes_atual, 1, tzinfo=datetime.timezone.utc), 'valor': float('0.00')}]
         df = pd.DataFrame(item)
-    df['data'] = pd.to_datetime(df['data'], format='%d-%m-%Y').dt.strftime('%d-%m-%Y')
+    df['data'] = pd.to_datetime(df['data'],format='%Y-%m-%d').dt.strftime('%Y-%m-%d') #format='%d-%m-%Y').dt.strftime('%d-%m-%Y')
     df['valor'] = df['valor'].astype(float)
 
     new_df = pd.DataFrame({'data': data})
-    new_df['data'] = pd.to_datetime(new_df['data'], format='%d-%m-%Y').dt.strftime('%d-%m-%Y')
+    new_df['data'] = pd.to_datetime(new_df['data'],format='%Y-%m-%d').dt.strftime('%Y-%m-%d') #format='%d-%m-%Y').dt.strftime('%d-%m-%Y')
 
     m = pd.merge(df, new_df, how='outer')
     m= m.groupby('data').sum()
