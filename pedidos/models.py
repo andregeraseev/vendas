@@ -2,12 +2,16 @@ from django.db import models
 from clientes.models import Cliente,Endereco
 from vendedores.models import Vendedor
 from produtos.models import Juice
+from datetime import datetime
+from django.utils import timezone
+
+
 
 
 class Item(models.Model):
     produto = models.ForeignKey(Juice, on_delete=models.CASCADE)
     quantidade = models.PositiveIntegerField()
-    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True,  blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     @property
@@ -18,34 +22,45 @@ class Item(models.Model):
             for item  in items:
                 total.append(item.quantidade)
 
+        descont = [pedido.desconto for pedido in self.pedido_set.all()]
+        if descont[0] != None:
+            desconto = descont[0]
+        else:
+            desconto = 0
+
         quantidade= sum(total)
         if self.produto.mg == '9mg' or self.produto.mg == '12mg':
             if quantidade >= 20 and quantidade <= 49:
-                return 24 * self.quantidade
+                return (24 -desconto) * self.quantidade
             elif quantidade >= 50 and quantidade <= 99:
-                return 22 * self.quantidade
+                return (22 -desconto)* self.quantidade
             elif quantidade >= 100 and quantidade <= 199:
-                return 20 * self.quantidade
+                return (20 -desconto) * self.quantidade
             elif quantidade >= 200:
-                return 19 * self.quantidade
+                return (19-desconto) * self.quantidade
             else:
-                return self.quantidade * 27
+                return self.quantidade * (27-desconto)
         else:
             if quantidade >= 20 and quantidade <= 49:
-                return 22 * self.quantidade
+                return (22 -desconto) * self.quantidade
             elif quantidade >= 50 and quantidade <= 99:
-                return 20 * self.quantidade
+                return (20 -desconto) * self.quantidade
             elif quantidade >= 100 and quantidade <= 199:
-                return 18 * self.quantidade
+                return (18 -desconto) * self.quantidade
             elif quantidade >= 200:
-                return 17 * self.quantidade
+                return (17 -desconto) * self.quantidade
             else:
-                return self.quantidade * 25
+                return self.quantidade * (25 -desconto)
 
     def valor_unitario(self):
-        qr_item = [it.items.all() for it in self.pedido_set.all()]
+        qr_pedido = [pedido.items.all() for pedido in self.pedido_set.all()]
+        descont = [pedido.desconto for pedido in self.pedido_set.all()]
+        if descont[0] != None:
+            desconto = descont[0]
+        else:
+            desconto = 0
         total = []
-        for items in qr_item:
+        for items in qr_pedido:
             for item in items:
                 total.append(item.quantidade)
 
@@ -53,26 +68,26 @@ class Item(models.Model):
 
         if self.produto.mg == '9mg' or self.produto.mg == '12mg':
             if quantidade >= 20 and quantidade <= 49:
-                return 24
+                return 24 - desconto
             elif quantidade >= 50 and quantidade <= 99:
-                return 22
+                return 22 - desconto
             elif quantidade >= 100 and quantidade <= 199:
-                return 20
+                return 20 - desconto
             elif quantidade >= 200:
-                return 19
+                return 19 -desconto
             else:
-                return 27
+                return 27 -desconto
         else:
             if quantidade >= 20 and quantidade <= 49:
-                return 22
+                return 22 -desconto
             elif quantidade >= 50 and quantidade <= 99:
-                return 20
+                return 20 -desconto
             elif quantidade >= 100 and quantidade <= 199:
-                return 18
+                return 18 - desconto
             elif quantidade >= 200:
-                return 17
+                return 17 - desconto
             else:
-                return 25
+                return 25 - desconto
 
 
 
@@ -94,7 +109,9 @@ class Pedido(models.Model):
     primeira_compra = models.BooleanField(default=False)
     recebido = models.BooleanField(default=False)
     endereco = models.ForeignKey(Endereco, null=True, on_delete=models.CASCADE)
+    desconto = models.DecimalField(max_digits=8,decimal_places=2, null=True, blank=True)
     valor = models.DecimalField(max_digits=8,decimal_places=2, null=True, blank=True)
+    data = models.DateTimeField(default=datetime.now(tz=timezone.utc), blank=True, null=True)
     def __str__(self):
         return str(self.pk)
 

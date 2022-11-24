@@ -16,11 +16,11 @@
             </tr>
             </thead>
             <tbody>
-            {% for pedido in pedidos %}
+            {% for pedido in pedidos_pagos %}
             <tr>
                 <td>{{ pedido.id }}</td>
                 <td><a  class="btn btn-primary" href="/pedidos/{{ pedido.cliente.id }}" role="button">{{ pedido.cliente.nome }}</a></td>
-                <td>{{ pedido.created_at|date:"d/m/Y"}}</td>
+                <td>{{ pedido.data|date:"d/m/Y"}}</td>
                 <td>{% if pedido.status == True %}<h5><span class="badge bg-success py-auto">FECHADO</span></h5>  {% else %}<h5><span class="badge bg-warning py-auto">ABERTO</span></h5>  {% endif %}</td>
                 <td>R$ {{ pedido.valor_total }}</td>
                 <td>R$ {{ pedido.comicao }}</td>

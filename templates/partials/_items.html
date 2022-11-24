@@ -65,7 +65,36 @@
 <a class="btn btn-primary" href="/pedidos/{% for client in cliente %}{{ client.id }}{% endfor %}" role="button">voltar
     para pedidos do cliente</a>
 
+
+
 <br>
+<div class=" my-5">
+    <div class="container border my-3">
+        <div class="row bg-danger text-center mb-3">
+            <h3>Desconto</h3>
+        </div>
+
+        <div class="p-3">
+            <h5 class="mb-4">Desconto por unidade no pedido: R${{ pedido.desconto }}</h5>
+            <form method='Post' action='desconto' class="row g-3 align-items-center">
+                <div class="col-auto ">
+                    {% csrf_token %}
+                    <label for="desconto" class="h5">Valor de desconto R$:</label>
+                </div>
+                <div class="col-2 ">
+                    <input type='number' class="form-control" name='desconto' id='desconto' value='0'>
+                </div>
+                <div class="col-auto">
+                    <button type='submit' name='Enviar' class=' form-control btn btn-danger'>Aplicar desconto</button>
+                </div>
+            </form>
+
+
+        </div>
+
+    </div>
+</div>
+
 <div id="alert_placeholder"></div>
 <div class="container border my-3">
     <div class="row bg-danger text-center mb-3">
@@ -100,6 +129,8 @@
     </div>
 
 </form>
+
+
 
 {% endfor %}
 

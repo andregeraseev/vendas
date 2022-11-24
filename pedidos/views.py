@@ -15,28 +15,86 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import io
 import urllib, base64
+from django.utils import timezone
+import calendar
+from mpl_toolkits.axes_grid1.axes_divider import make_axes_area_auto_adjustable
+import numpy as np
 
 
 
 @login_required
 def todos_pedidos(request):
-    hoje = datetime.date.today()
-    mes_atual = hoje.strftime('%m')
-    # inicio pandas
-    item = Pedido.objects.filter(pagamento=True, created_at__month=mes_atual, vendedor_id=request.user.vendedor.id).values('created_at','valor')
-    df = pd.DataFrame(item)
-    # df['created_at'] = pd.to_datetime(df['created_at'])
-    # df['created_at'] = df['created_at'].astype('datetime64[ns]')
-    df['created_at'] = pd.to_datetime(df['created_at']).dt.date
-    # df.groupby('created_at').sum()
+    hoje = datetime.datetime.now(tz=timezone.utc)
+    if request.method == "POST":
+        data_inicio = request.POST["data_inicio"]
+        data_fim = request.POST["data_fim"]
+        if data_inicio > data_fim:
 
-    # df.groupby('valor').sum()
-    # print(df.groupby('created_at').sum())
-    # df['cliente'] = df['cliente'].astype(float)
+            incio_dia = 1
+            mes_atual = int(hoje.strftime('%m'))
+            ano_atual = int(hoje.strftime('%Y'))
+            proximo_mes = int(mes_atual) + 1 if mes_atual != 12 else 1
+            proximo_ano = ano_atual if mes_atual != 12 else int(ano_atual) + 1
+            fim_dia = 1
+            _, dias_no_mes = calendar.monthrange(int(ano_atual), int(mes_atual))
+            data = pd.date_range(f'{mes_atual}/1/{ano_atual}', periods=dias_no_mes)
+            messages.error(request,'Data de inicio não pode ser menor que data final', 'danger')
+
+
+        else:
+
+            ano_atual = int(data_inicio[6:10])
+            mes_atual= int(data_inicio[3:5])
+            incio_dia = int(data_inicio[0:2])
+            proximo_ano = int(data_fim[6:10])
+            proximo_mes = int(data_fim[3:5])
+            fim_dia = int(data_fim[0:2])
+            dias_no_mes = datetime.datetime(proximo_ano,proximo_mes, fim_dia) - datetime.datetime(ano_atual,mes_atual,incio_dia)
+
+            data = pd.date_range(f'{mes_atual}/{incio_dia}/{ano_atual}', periods=dias_no_mes.days)
+
+
+
+    else:
+        incio_dia = 1
+        mes_atual = int(hoje.strftime('%m'))
+        ano_atual = int(hoje.strftime('%Y'))
+        proximo_mes = int(mes_atual) + 1 if mes_atual != 12 else 1
+        proximo_ano = ano_atual if mes_atual != 12 else int(ano_atual) + 1
+        fim_dia =1
+        _, dias_no_mes = calendar.monthrange(int(ano_atual), int(mes_atual))
+        data = pd.date_range(f'{mes_atual}/1/{ano_atual}', periods=dias_no_mes)
+    # inicio pandas
+
+
+    item = Pedido.objects.filter(pagamento=True, status=True,
+                                 data__gte=datetime.date(int(ano_atual), int(mes_atual), int(incio_dia)),
+                                 data__lte=datetime.date(int(proximo_ano), int(proximo_mes), int(fim_dia)),
+                                 vendedor_id=request.user.vendedor.id).values('data','valor')
+
+    if len(item) >= 1:
+        df = pd.DataFrame(item)
+    else:
+        item = [{'data': datetime.datetime(ano_atual, mes_atual, 1, tzinfo=datetime.timezone.utc), 'valor': float('0.00')}]
+        df = pd.DataFrame(item)
+    df['data'] = pd.to_datetime(df['data'], format='%d-%m-%Y').dt.strftime('%d-%m-%Y')
     df['valor'] = df['valor'].astype(float)
 
-    df.plot(x='created_at',y='valor',figsize=(13,5), colormap='prism', grid=True)
-    # df.plot( kind='bar', title='Vendas por mes', x='created_at', figsize=(15,5), colormap='prism')
+    new_df = pd.DataFrame({'data': data})
+    new_df['data'] = pd.to_datetime(new_df['data'], format='%d-%m-%Y').dt.strftime('%d-%m-%Y')
+
+    m = pd.merge(df, new_df, how='outer')
+    m= m.groupby('data').sum()
+    m.fillna(0,inplace=True)
+
+    fig, ax = plt.subplots()
+    ax.set_xticks(range( 0, len(m)))
+    make_axes_area_auto_adjustable(ax)
+
+    m.plot(figsize=(13,5), colormap='prism', grid=True, ax=ax)
+    plt.xticks(rotation=90)
+
+
     plt.title("Vendas do mes")
     plt.xlabel('data')
     plt.ylabel("valor");
@@ -48,13 +106,15 @@ def todos_pedidos(request):
     graphic = base64.b64encode(image_png)
     graphic = graphic.decode('utf-8')
     #fim pandas
+
+
     vendedor = Vendedor.objects.filter(id=request.user.vendedor.id)
     clientes = Cliente.objects.filter(vendedor=request.user.vendedor.id)
     pedidos = Pedido.objects.filter(vendedor=request.user.vendedor.id)
     pedidos_pagos_uf = Pedido.objects.filter(pagamento=True, vendedor=request.user.vendedor.id)
     pedidos_pagos = Pedido.objects.filter(pagamento=True, vendedor=request.user.vendedor.id,
-                                          created_at__gte=datetime.date(2022, int(mes_atual), 1),
-                                          created_at__lte=datetime.date(2022, int(mes_atual), 30))
+                                          data__gte=datetime.date(int(ano_atual), int(mes_atual), int(incio_dia)),
+                                          data__lte=datetime.date(int(ano_atual), int(proximo_mes), int(fim_dia))).order_by('id')
     pedidos_comicao_nao_paga = Pedido.objects.filter(pagamento=True, vendedor=request.user.vendedor.id, recebido=False)
     comicao_pendente = sum([pedido.comicao for pedido in pedidos_comicao_nao_paga])
     items = Item.objects.filter(pedido__vendedor=request.user.vendedor.id, pedido__pagamento=True)
@@ -461,5 +521,16 @@ def escolher_endereco(request,cliente,pedido):
             Endereco.objects.filter(id=endereco_ativo).update(ativo=True)# endereço atual fica como Ativo
 
             Pedido.objects.filter(id=pedido).update(endereco=endereco_ativo)# adiciona esse endereço ao pedido
+
+    return redirect(f"/pedido/{cliente}/{pedido}")
+
+
+def desconto(request,cliente,pedido):
+    if request.method == 'POST':  # Seleciona endereco
+
+        desconto = request.POST['desconto']
+        Pedido.objects.filter(id=pedido).update(desconto=desconto)
+
+
 
     return redirect(f"/pedido/{cliente}/{pedido}")

@@ -3,5 +3,11 @@
 {% block content %}
 
 {% include 'partials/_clientes.html' %}
+<div class="container text-center mb-5">
+<img src="data:image/png;base64,{{ graphic|safe }}">
+</div>
+    <div class="container text-center mb-5">
+<img src="data:image/png;base64,{{ graphic_valor|safe }}">
+</div>
 
 {% endblock %}

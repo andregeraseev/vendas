@@ -1,6 +1,49 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+<!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js" integrity="sha256-VBLiveTKyUZMEzJd6z2mhfxIqz3ZATCuVMawPZGzIfA=" crossorigin="anonymous"></script>
+ <!-- Font Awesome -->
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+    <!-- Tempus Dominus Bootstrap 4 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" integrity="sha256-XPTBwC3SBoWHSmKasAk01c08M6sIA5gF5+sRxqak2Qs=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js" integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous"></script>
+<body>
+
+{% include 'partials/_alertas.html' %}
+<div class="container my-2">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group row">
+            <label for="datetimepicker1" class="col-1 col-form-label">Data inicio</label>
+            <div class="col-3">
+                <div class="input-group date form-group"  id="datetimepicker1"
+                     data-target-input="nearest">
+                    <input type="text" class="form-control  datetimepicker-input" name="data_inicio" data-target="#datetimepicker1" required/>
+                    <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class=" h5 fa fa-calendar"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <label for="datetimepicker2" class="col-1 col-form-label">Data final</label>
+            <div class="col-3">
+                <div class="input-group date form-group"  id="datetimepicker2"
+                     data-target-input="nearest">
+                    <input type="text" class="form-control datetimepicker-input" name="data_fim" data-target="#datetimepicker2" required/>
+                    <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class=" h5 fa fa-calendar"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-3 ">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+            </div>
+        </div>
+    </form>
+</div>
 
 
 {% include 'partials/_tabela_pedidos.html' %}
@@ -10,5 +53,24 @@
 </div>
 
 {{ request.user.vendedor.endereco_cliente }}
+
+
+<script>
+  $(function () {
+    $("#datetimepicker1").datetimepicker({
+      format: 'DD/MM/YYYY',
+    });
+  });
+</script>
+<script>
+  $(function () {
+    $("#datetimepicker2").datetimepicker({
+      format: 'DD/MM/YYYY',
+    });
+  });
+</script>
+
+
+
 
 {% endblock %}
